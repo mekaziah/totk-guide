@@ -3,11 +3,14 @@ import { ARMOR, type ArmorSet } from "@/lib/data";
 import { PageHeader } from "@/components/PageHeader";
 import { VideoLink } from "@/components/VideoLink";
 import { ItemImage } from "@/components/ItemImage";
+import { ArmorImage } from "@/components/Lightbox";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 function ArmorCard({ item, idx }: { item: ArmorSet; idx: number }) {
+  const imageSrc = `${import.meta.env.BASE_URL}armor/${item.id}.png`;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -15,6 +18,13 @@ function ArmorCard({ item, idx }: { item: ArmorSet; idx: number }) {
       transition={{ delay: idx * 0.05 }}
     >
       <Card className="h-full bg-card/50 hover:border-primary/50 transition-colors flex flex-col">
+        {/* Armor set image with lightbox */}
+        <ArmorImage
+          src={imageSrc}
+          alt={item.name}
+          className="w-full aspect-[4/3] border-b border-border/40"
+        />
+
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start gap-2">
             <CardTitle className="text-lg font-serif text-accent leading-tight">{item.name}</CardTitle>
@@ -85,7 +95,7 @@ export default function Gear() {
     <div className="p-6 lg:p-12 max-w-7xl mx-auto">
       <PageHeader
         title="Gear & Armor"
-        description={`${ARMOR.length} armor sets — every piece shows its icon, exact coordinates, and a direct video guide link. Set bonuses unlock at Great Fairy Fountains.`}
+        description={`${ARMOR.length} armor sets — click any set image to view it up close. Each piece shows its exact coordinates and a video guide link. Set bonuses unlock at Great Fairy Fountains.`}
         icon={<Navigation className="h-12 w-12" />}
       />
 

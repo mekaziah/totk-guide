@@ -1,0 +1,116 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "8zgUDw5YaTY14OtsPWB4D"
+uri = "file://artifacts/totk-guide/public/armor/hylian.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "O05DuT7NUVsgSK7nBVUoK"
+uri = "file://artifacts/totk-guide/public/armor/archaic.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "1ZaS-O1bFoIrNhw3HB9J_"
+uri = "file://artifacts/totk-guide/public/armor/snowquill.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "drIgYd3vgP6FMIEpc10cd"
+uri = "file://artifacts/totk-guide/public/armor/flamebreaker.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "YzRJhZsdpeCNgMdvQHJPM"
+uri = "file://artifacts/totk-guide/public/armor/desert-voe.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "PjYG6V9YYbMbDB0FuTnJY"
+uri = "file://artifacts/totk-guide/public/armor/zora.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "tvXxO4kph52jUrBCkf7Ev"
+uri = "file://artifacts/totk-guide/public/armor/rubber.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "75nrJhDDrxooGlqh8BoX1"
+uri = "file://artifacts/totk-guide/public/armor/climbing.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ZYwQ4HNoirbXekK-Mjqk8"
+uri = "file://artifacts/totk-guide/public/armor/barbarian.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "vjzmTFr5I74vX4foVOSC-"
+uri = "file://artifacts/totk-guide/public/armor/stealth.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "UytxwfmaonIE5kkkVfMp2"
+uri = "file://artifacts/totk-guide/public/armor/soldiers.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "iPqVrdnCDIX4sgj9e99-o"
+uri = "file://artifacts/totk-guide/public/armor/depths-armor.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "x0N-9myFkcGCz_vJsbD31"
+uri = "file://artifacts/totk-guide/public/armor/phantom.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Ufim0Gb6bj0vOarpTccxK"
+uri = "file://artifacts/totk-guide/public/armor/evil-spirit.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "kB5WLpY8uhvTMkvNreu-B"
+uri = "file://artifacts/totk-guide/public/armor/fierce-deity.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "vwU45SFTLZ7TFxLuILGKb"
+uri = "file://artifacts/totk-guide/public/armor/ancient-hero.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Z7GQBrOr9gpBHPb9hCEPF"
+uri = "file://artifacts/totk-guide/public/armor/sand-boots.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "McrhVMsIR41USKXTKRr8V"
+uri = "file://artifacts/totk-guide/public/armor/glide.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "BU9OhmXmysnrgxEnNo545"
+uri = "file://artifacts/totk-guide/public/armor/zonaite.png"
+type = "image"
+title = "generated_image"

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Map, Sword, Shield, Target, ScrollText,
@@ -6,6 +6,8 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { BackToTop } from "@/components/BackToTop";
+import { Lightbox } from "@/components/Lightbox";
 
 const NAV_ITEMS = [
   { href: "/",          label: "Overview",        icon: BookOpen  },
@@ -23,6 +25,18 @@ const NAV_ITEMS = [
 
 export function Layout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { src, alt } = (e as CustomEvent<{ src: string; alt: string }>).detail;
+      setLightbox({ src, alt });
+    };
+    window.addEventListener("open-lightbox", handler);
+    return () => window.removeEventListener("open-lightbox", handler);
+  }, []);
+
+  const isMap = location === "/map";
 
   const NavLinks = () => (
     <nav className="space-y-1">
@@ -59,7 +73,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <main id="main-scroll" className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
         <header className="md:hidden flex items-center border-b border-border p-4 bg-sidebar-background sticky top-0 z-50">
           <Sheet>
             <SheetTrigger asChild>
@@ -78,10 +92,23 @@ export function Layout({ children }: { children: ReactNode }) {
           </Sheet>
           <span className="font-serif text-gradient font-bold tracking-widest uppercase">TOTK Guide</span>
         </header>
+
         <div className="flex-1 pb-16">
           {children}
         </div>
       </main>
+
+      {/* Global: Back to top (all pages except Interactive Map) */}
+      {!isMap && <BackToTop />}
+
+      {/* Global: Lightbox overlay */}
+      {lightbox && (
+        <Lightbox
+          src={lightbox.src}
+          alt={lightbox.alt}
+          onClose={() => setLightbox(null)}
+        />
+      )}
     </div>
   );
 }
