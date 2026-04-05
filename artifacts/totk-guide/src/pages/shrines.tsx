@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { MapPin, Search } from "lucide-react";
 import { SHRINES } from "@/lib/data";
 import { PageHeader } from "@/components/PageHeader";
+import { VideoLink } from "@/components/VideoLink";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,6 +81,10 @@ export default function Shrines() {
                   </div>
                   <div className="pt-2 text-muted-foreground italic">
                     "{shrine.hint}"
+                  </div>
+                  <div className="pt-3 flex items-center justify-between border-t border-border/40 mt-1">
+                    <span className="text-xs text-muted-foreground">Shrine solution</span>
+                    <VideoLink name={shrine.name} extraTerms="shrine solution walkthrough totk" />
                   </div>
                 </div>
               </CardContent>
