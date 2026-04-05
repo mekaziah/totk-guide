@@ -122,7 +122,7 @@ export default function InteractiveMap() {
       )}
 
       {/* ── Normal page ─────────────────────────────────────── */}
-      <div className="flex flex-col h-[calc(100vh-4rem)] p-4 md:p-6 lg:p-8">
+      <div className="p-4 md:p-6 lg:p-8 pb-16">
         <PageHeader
           title="Interactive Map"
           description="Explore the full map of Hyrule. Filter by Shrines, Koroks, caves, Depths entrances, and more."
@@ -144,7 +144,7 @@ export default function InteractiveMap() {
           </Button>
         </div>
 
-        <div className="flex-1 w-full rounded-lg overflow-hidden border border-border hylian-border min-h-0">
+        <div className="w-full rounded-lg overflow-hidden border border-border hylian-border" style={{ height: "calc(100vh - 18rem)" }}>
           <MapFrame className="w-full h-full" />
         </div>
       </div>
