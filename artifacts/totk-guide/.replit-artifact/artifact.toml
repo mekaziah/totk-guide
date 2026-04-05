@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Tears of the Kingdom Guide"
+version = "1.0.0"
+id = "artifacts/totk-guide"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23274
+
+[services.development]
+run = "pnpm --filter @workspace/totk-guide run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/totk-guide", "run", "build" ]
+publicDir = "artifacts/totk-guide/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23274"
+BASE_PATH = "/"

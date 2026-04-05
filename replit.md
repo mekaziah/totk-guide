@@ -25,3 +25,13 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+
+## Artifacts
+
+### Tears of the Kingdom Guide (`artifacts/totk-guide`)
+- **Type**: react-vite static frontend
+- **Preview path**: `/`
+- **Purpose**: Comprehensive TOTK guide website with 10 sections
+- **Sections**: Overview, Walkthrough, Shrines (152), Weapons, Shields, Bows, Gear & Armor, Secrets & Easter Eggs, Hidden Areas, Interactive Map
+- **Features**: Sortable weapon/shield/bow tables, filterable shrine list, armor upgrade cards, embedded interactive map, dark Hyrule-themed design
+- **No backend needed** — all data stored as TypeScript constants
