@@ -159,12 +159,15 @@ export interface UpgradeTier {
   star: 1 | 2 | 3 | 4; materials: string[];
 }
 export interface ArmorSet {
-  id: string; name: string; maxStars: number; upgradeTiers: UpgradeTier[]; pieces: ArmorPiece[]; effect: string; setBonus: string; upgradeBonus: string;
+  id: string; name: string; maxStars: number; upgradeTiers: UpgradeTier[]; pieces: ArmorPiece[]; effect: string; setBonus: string; upgradeBonus: string; imageUrl?: string;
 }
+
+const ARMOR_IMG = (id: string) =>
+  `https://raw.githubusercontent.com/mekaziah/totk-guide/main/artifacts/totk-guide/public/armor/${id}.png`;
 
 export const ARMOR: ArmorSet[] = [
   {
-    id: "hylian", name: "Hylian Set", maxStars: 4,
+    id: "hylian", name: "Hylian Set", maxStars: 4, imageUrl: ARMOR_IMG("hylian"),
     effect: "None", setBonus: "None", upgradeBonus: "Increases base defense each tier",
     upgradeTiers: [
       { star: 1, materials: ["3× Bokoblin Horn"] },
@@ -179,7 +182,7 @@ export const ARMOR: ArmorSet[] = [
     ],
   },
   {
-    id: "snowquill", name: "Snowquill Set", maxStars: 4,
+    id: "snowquill", name: "Snowquill Set", maxStars: 4, imageUrl: ARMOR_IMG("snowquill"),
     effect: "Cold Resistance", setBonus: "Unfreezable", upgradeBonus: "Tier 2 grants Unfreezable set bonus",
     upgradeTiers: [
       { star: 1, materials: ["3× Blue Chuchu Jelly"] },
@@ -194,7 +197,7 @@ export const ARMOR: ArmorSet[] = [
     ],
   },
   {
-    id: "flamebreaker", name: "Flamebreaker Set", maxStars: 4,
+    id: "flamebreaker", name: "Flamebreaker Set", maxStars: 4, imageUrl: ARMOR_IMG("flamebreaker"),
     effect: "Flame Guard", setBonus: "Fireproof", upgradeBonus: "Tier 2 grants Fireproof set bonus",
     upgradeTiers: [
       { star: 1, materials: ["1× Fireproof Lizard"] },
@@ -209,7 +212,7 @@ export const ARMOR: ArmorSet[] = [
     ],
   },
   {
-    id: "zora", name: "Zora Set", maxStars: 4,
+    id: "zora", name: "Zora Set", maxStars: 4, imageUrl: ARMOR_IMG("zora"),
     effect: "Swim Speed Up", setBonus: "Waterfall Climb", upgradeBonus: "Tier 2 grants Waterfall Climb set bonus",
     upgradeTiers: [
       { star: 1, materials: ["3× Lizalfos Horn"] },
@@ -224,7 +227,7 @@ export const ARMOR: ArmorSet[] = [
     ],
   },
   {
-    id: "barbarian", name: "Barbarian Set", maxStars: 4,
+    id: "barbarian", name: "Barbarian Set", maxStars: 4, imageUrl: ARMOR_IMG("barbarian"),
     effect: "Attack Up", setBonus: "Charge Attack Stamina Up", upgradeBonus: "Tier 2 grants Charge Attack Stamina Up",
     upgradeTiers: [
       { star: 1, materials: ["3× Lynel Horn"] },
@@ -239,7 +242,7 @@ export const ARMOR: ArmorSet[] = [
     ],
   },
   {
-    id: "stealth", name: "Stealth Set", maxStars: 4,
+    id: "stealth", name: "Stealth Set", maxStars: 4, imageUrl: ARMOR_IMG("stealth"),
     effect: "Stealth Up", setBonus: "Night Speed Up", upgradeBonus: "Tier 2 grants Night Speed Up set bonus",
     upgradeTiers: [
       { star: 1, materials: ["3× Sunset Firefly"] },
@@ -254,7 +257,7 @@ export const ARMOR: ArmorSet[] = [
     ],
   },
   {
-    id: "rubber", name: "Rubber Set", maxStars: 4,
+    id: "rubber", name: "Rubber Set", maxStars: 4, imageUrl: ARMOR_IMG("rubber"),
     effect: "Shock Resistance", setBonus: "Unshockable", upgradeBonus: "Tier 2 grants Unshockable set bonus",
     upgradeTiers: [
       { star: 1, materials: ["3× Yellow Chuchu Jelly"] },
@@ -269,7 +272,7 @@ export const ARMOR: ArmorSet[] = [
     ],
   },
   {
-    id: "climbing", name: "Climbing Gear", maxStars: 4,
+    id: "climbing", name: "Climbing Gear", maxStars: 4, imageUrl: ARMOR_IMG("climbing"),
     effect: "Climb Speed Up", setBonus: "Climber's Stamina (sprint-jump while climbing)", upgradeBonus: "Tier 2 grants sprint-jump climbing bonus",
     upgradeTiers: [
       { star: 1, materials: ["3× Lizalfos Horn"] },

@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import React, { useState } from "react";
 import { FlatList, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -147,6 +148,18 @@ export default function GearScreen() {
               <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <TouchableOpacity onPress={() => setExpandedArmor(isOpen ? null : item.id)} activeOpacity={0.8}>
                   <View style={styles.armorHeader}>
+                    {item.imageUrl ? (
+                      <Image
+                        source={{ uri: item.imageUrl }}
+                        style={styles.armorImage}
+                        contentFit="contain"
+                        transition={200}
+                      />
+                    ) : (
+                      <View style={[styles.armorImagePlaceholder, { backgroundColor: colors.muted }]}>
+                        <Feather name="layers" size={22} color={colors.mutedForeground} />
+                      </View>
+                    )}
                     <View style={styles.armorTitleCol}>
                       <Text style={[styles.itemName, { color: colors.foreground }]}>{item.name}</Text>
                       <View style={styles.armorBadges}>
@@ -227,7 +240,9 @@ const styles = StyleSheet.create({
   effectText: { fontSize: 12, flex: 1, lineHeight: 17 },
   locationRow: { flexDirection: "row", alignItems: "flex-start", gap: 6 },
   locationText: { fontSize: 12, flex: 1, lineHeight: 17 },
-  armorHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  armorHeader: { flexDirection: "row", alignItems: "center", gap: 12 },
+  armorImage: { width: 56, height: 56, borderRadius: 10 },
+  armorImagePlaceholder: { width: 56, height: 56, borderRadius: 10, alignItems: "center", justifyContent: "center" },
   armorTitleCol: { flex: 1, gap: 6 },
   armorBadges: { flexDirection: "row", gap: 6, flexWrap: "wrap" },
   starBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },

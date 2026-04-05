@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import {
   Animated,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -154,6 +155,7 @@ export default function MapScreen() {
           contentContainerStyle={{ width: MAP_W, height: MAP_H }}
           showsVerticalScrollIndicator={false}
         >
+          <View style={{ width: MAP_W, height: MAP_H, position: "relative" }}>
           <Svg width={MAP_W} height={MAP_H}>
             <Rect
               x={0}
@@ -257,13 +259,7 @@ export default function MapScreen() {
               return (
                 <G key={s.id}>
                   {isSelected && (
-                    <Circle
-                      cx={s.mx}
-                      cy={s.my}
-                      r={14}
-                      fill={color}
-                      opacity={0.25}
-                    />
+                    <Circle cx={s.mx} cy={s.my} r={14} fill={color} opacity={0.25} />
                   )}
                   <Circle
                     cx={s.mx}
@@ -273,24 +269,33 @@ export default function MapScreen() {
                     stroke={color}
                     strokeWidth={done ? 1.5 : 0}
                     opacity={done ? 0.6 : 1}
-                    onPress={() => setSelected(s)}
                   />
                   {isSelected && (
-                    <SvgText
-                      x={s.mx}
-                      y={s.my - 14}
-                      fill={color}
-                      fontSize={9}
-                      textAnchor="middle"
-                      fontWeight="bold"
-                    >
+                    <SvgText x={s.mx} y={s.my - 14} fill={color} fontSize={9} textAnchor="middle" fontWeight="bold">
                       {s.name.replace(" Shrine", "")}
                     </SvgText>
                   )}
                 </G>
               );
             })}
+
           </Svg>
+
+          {/* Native Pressable overlay for reliable cross-platform tap detection */}
+          <Pressable
+            style={{ position: "absolute", top: 0, left: 0, width: MAP_W, height: MAP_H }}
+            onPress={(e) => {
+              const ne = e.nativeEvent as any;
+              const tapX: number = ne.locationX ?? ne.offsetX ?? 0;
+              const tapY: number = ne.locationY ?? ne.offsetY ?? 0;
+              const HIT = 14;
+              const hit = visible.find(
+                (s) => Math.hypot(s.mx - tapX, s.my - tapY) < HIT
+              );
+              setSelected(hit ?? null);
+            }}
+          />
+          </View>
         </ScrollView>
       </ScrollView>
 
