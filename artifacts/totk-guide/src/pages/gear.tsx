@@ -1,4 +1,4 @@
-import { Navigation, MapPin } from "lucide-react";
+import { Navigation, MapPin, Star } from "lucide-react";
 import { ARMOR, type ArmorSet } from "@/lib/data";
 import { PageHeader } from "@/components/PageHeader";
 import { VideoLink } from "@/components/VideoLink";
@@ -32,6 +32,24 @@ function ArmorCard({ item, idx }: { item: ArmorSet; idx: number }) {
               {item.pieces.length} {item.pieces.length === 1 ? "piece" : "pieces"}
             </Badge>
           </div>
+          {/* Star upgrade rating */}
+          <div className="flex items-center gap-2 mt-1.5">
+            {item.maxStars > 0 ? (
+              <>
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-3.5 w-3.5 ${i < item.maxStars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-muted-foreground">Max ★{item.maxStars} upgradeable</span>
+              </>
+            ) : (
+              <span className="text-xs text-muted-foreground/60 italic">Cannot be upgraded</span>
+            )}
+          </div>
         </CardHeader>
 
         <CardContent className="space-y-4 flex-1 flex flex-col">
@@ -63,7 +81,18 @@ function ArmorCard({ item, idx }: { item: ArmorSet; idx: number }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-foreground font-medium text-sm">{piece.name}</span>
-                      <span className="text-xs text-muted-foreground shrink-0">DEF {piece.defense}</span>
+                      <span className="text-xs shrink-0">
+                        {item.maxStars > 0 ? (
+                          <span className="text-muted-foreground">
+                            DEF <span className="text-foreground">{piece.defense}</span>
+                            <span className="mx-1 text-muted-foreground/50">→</span>
+                            <span className="text-yellow-400 font-semibold">{piece.maxDefense}</span>
+                            <span className="text-muted-foreground/60 ml-0.5">★{item.maxStars}</span>
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">DEF {piece.defense}</span>
+                        )}
+                      </span>
                     </div>
                     <p className="text-foreground/70 text-xs leading-snug">{piece.location}</p>
                   </div>
