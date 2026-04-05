@@ -166,7 +166,7 @@ export interface ArmorSet {
 }
 
 const ARMOR_IMG = (id: string) =>
-  `https://raw.githubusercontent.com/mekaziah/totk-guide/main/artifacts/totk-guide/public/armor/${id}.png`;
+  `https://cdn.jsdelivr.net/gh/mekaziah/totk-guide@main/artifacts/totk-guide/public/armor/${id}.png`;
 
 export const ARMOR: ArmorSet[] = [
   {

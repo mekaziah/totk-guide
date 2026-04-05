@@ -1,9 +1,8 @@
 import { Feather } from "@expo/vector-icons";
-import React, { useRef, useState } from "react";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import React, { useState } from "react";
 import {
-  Animated,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -86,6 +85,14 @@ export default function MapScreen() {
   }).filter((s) => s.mx > 0 && s.my > 0);
 
   const visible = shrines.filter((s) => filter === "All" || s.type === filter);
+
+  const HIT = 18;
+  const tapGesture = Gesture.Tap()
+    .runOnJS(true)
+    .onEnd((e) => {
+      const hit = visible.find((s) => Math.hypot(s.mx - e.x, s.my - e.y) < HIT);
+      setSelected(hit ?? null);
+    });
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -281,20 +288,10 @@ export default function MapScreen() {
 
           </Svg>
 
-          {/* Native Pressable overlay for reliable cross-platform tap detection */}
-          <Pressable
-            style={{ position: "absolute", top: 0, left: 0, width: MAP_W, height: MAP_H }}
-            onPress={(e) => {
-              const ne = e.nativeEvent as any;
-              const tapX: number = ne.locationX ?? ne.offsetX ?? 0;
-              const tapY: number = ne.locationY ?? ne.offsetY ?? 0;
-              const HIT = 14;
-              const hit = visible.find(
-                (s) => Math.hypot(s.mx - tapX, s.my - tapY) < HIT
-              );
-              setSelected(hit ?? null);
-            }}
-          />
+          {/* GestureDetector tap — works correctly inside Android ScrollViews */}
+          <GestureDetector gesture={tapGesture}>
+            <View style={{ position: "absolute", top: 0, left: 0, width: MAP_W, height: MAP_H }} />
+          </GestureDetector>
           </View>
         </ScrollView>
       </ScrollView>
