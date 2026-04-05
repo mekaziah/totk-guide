@@ -27,6 +27,10 @@ function NativeTabLayout() {
         <Icon sf={{ default: "shield", selected: "shield.fill" }} />
         <Label>Gear</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="map">
+        <Icon sf={{ default: "map", selected: "map.fill" }} />
+        <Label>Map</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="tracker">
         <Icon sf={{ default: "checkmark.circle", selected: "checkmark.circle.fill" }} />
         <Label>Tracker</Label>
@@ -99,6 +103,14 @@ function ClassicTabLayout() {
           title: "Gear",
           tabBarIcon: ({ color }) =>
             isIOS ? <SymbolView name="shield" tintColor={color} size={22} /> : <Feather name="shield" size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: "Map",
+          tabBarIcon: ({ color }) =>
+            isIOS ? <SymbolView name="map" tintColor={color} size={22} /> : <Feather name="navigation" size={22} color={color} />,
         }}
       />
       <Tabs.Screen
