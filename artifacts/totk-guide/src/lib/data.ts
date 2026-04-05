@@ -567,4 +567,4 @@ export const HIDDEN_AREAS = [
 ];
 
 export const MAP_URL     = "https://www.zeldadungeon.net/tears-of-the-kingdom-interactive-map/";
-export const ALT_MAP_URL = "https://www.marjacob.me/totk/";
+export const ALT_MAP_URL = "https://objmap-totk.zeldamods.org/";
