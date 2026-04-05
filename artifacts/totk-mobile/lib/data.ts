@@ -98,58 +98,61 @@ export const SHRINES = [
 ];
 
 export interface Weapon {
-  id: string; name: string; type: string; attack: number; durability: number; effect: string; location: string; coords: string;
+  id: string; name: string; type: string; attack: number; durability: number; effect: string; location: string; coords: string; imageUrl?: string;
 }
 
+const C = (name: string) =>
+  `https://botw-compendium.herokuapp.com/api/v3/compendium/entry/${encodeURIComponent(name)}/image`;
+
 export const WEAPONS: Weapon[] = [
-  { id: "travelers-sword", name: "Traveler's Sword", type: "One-Handed", attack: 4, durability: 27, effect: "None", location: "Great Sky Island tutorial chest", coords: "0105, -1400, 1419" },
-  { id: "soldiers-broadsword", name: "Soldier's Broadsword", type: "One-Handed", attack: 14, durability: 30, effect: "None", location: "Hyrule Castle grounds enemy drop", coords: "-0766, 0994, 0107" },
-  { id: "knights-broadsword", name: "Knight's Broadsword", type: "One-Handed", attack: 18, durability: 33, effect: "None", location: "Akkala Citadel Ruins chest", coords: "3859, 3102, 0121" },
-  { id: "royal-broadsword", name: "Royal Broadsword", type: "One-Handed", attack: 24, durability: 36, effect: "None", location: "Hyrule Castle Sanctum chest", coords: "-0101, 1135, 0124" },
-  { id: "royal-guard-sword", name: "Royal Guard's Sword", type: "One-Handed", attack: 48, durability: 14, effect: "Breaking Point — massive dmg near break", location: "Hyrule Castle Armory chest", coords: "-0380, 1053, 0107" },
-  { id: "master-sword", name: "Master Sword", type: "One-Handed", attack: 30, durability: 999, effect: "Recharges; glows near Gloom; beams at full HP", location: "Light Dragon's head (2 full stamina wheels)", coords: "0000, 0000, 1000" },
-  { id: "scimitar-of-seven", name: "Scimitar of the Seven", type: "One-Handed", attack: 28, durability: 60, effect: "Strong Fusion — doubles fuse atk bonus", location: "Gerudo Town, Isha's Jewelry (post-Regional)", coords: "-3731, -2920, 0015" },
-  { id: "gloom-sword", name: "Gloom Sword", type: "One-Handed", attack: 41, durability: 15, effect: "Gloom Toll — drains permanent hearts", location: "Phantom Ganon drop (post Gloom Hands)", coords: "-0116, 0984, 0100" },
-  { id: "travelers-claymore", name: "Traveler's Claymore", type: "Two-Handed", attack: 8, durability: 30, effect: "None", location: "Necluda road chest", coords: "1820, -2010, 0050" },
-  { id: "royal-claymore", name: "Royal Claymore", type: "Two-Handed", attack: 28, durability: 40, effect: "None", location: "Hyrule Castle Throne Room chest", coords: "-0094, 1225, 0107" },
-  { id: "gloom-claymore", name: "Gloom Claymore", type: "Two-Handed", attack: 54, durability: 15, effect: "Gloom Toll — drains permanent hearts", location: "Phantom Ganon drop, Depths Coliseum", coords: "-1048, -0840, -0500" },
-  { id: "savage-lynel-crusher", name: "Savage Lynel Crusher", type: "Two-Handed", attack: 78, durability: 45, effect: "None", location: "White-Maned/Silver Lynel drop", coords: "-0390, -0655, -0400" },
-  { id: "boulder-breaker", name: "Boulder Breaker", type: "Two-Handed", attack: 38, durability: 30, effect: "Increased digging damage; rebuild via Fugo", location: "Goron City (regional reward)", coords: "1653, 2434, 0380" },
-  { id: "travelers-spear", name: "Traveler's Spear", type: "Spear", attack: 4, durability: 24, effect: "None", location: "Akkala camp chest", coords: "3860, 2460, 0128" },
-  { id: "royal-halberd", name: "Royal Halberd", type: "Spear", attack: 26, durability: 33, effect: "None", location: "Hyrule Castle East wing chest", coords: "-0030, 1230, 0208" },
-  { id: "lightscale-trident", name: "Lightscale Trident", type: "Spear", attack: 22, durability: 60, effect: "None; rebuild via Dento smith", location: "Zora's Domain reward (Sidon's quest)", coords: "3289, 0600, 0270" },
-  { id: "savage-lynel-spear", name: "Savage Lynel Spear", type: "Spear", attack: 30, durability: 35, effect: "None", location: "White-Maned/Silver Lynel drop", coords: "-0390, -0655, -0400" },
-  { id: "zonaite-spear", name: "Zonaite Spear", type: "Spear", attack: 14, durability: 35, effect: "Fuse bonus doubled", location: "Sky Island construct drop / Zonai ruins chest", coords: "0612, -0913, 1460" },
+  { id: "travelers-sword",       name: "Traveler's Sword",         type: "One-Handed",  attack:  4, durability:  27, effect: "None",                                             location: "Great Sky Island tutorial chest",                  coords: "0105, -1400, 1419", imageUrl: C("traveler's sword") },
+  { id: "soldiers-broadsword",   name: "Soldier's Broadsword",     type: "One-Handed",  attack: 14, durability:  30, effect: "None",                                             location: "Hyrule Castle grounds enemy drop",                  coords: "-0766, 0994, 0107", imageUrl: C("soldier's broadsword") },
+  { id: "knights-broadsword",    name: "Knight's Broadsword",      type: "One-Handed",  attack: 18, durability:  33, effect: "None",                                             location: "Akkala Citadel Ruins chest",                        coords: "3859, 3102, 0121",  imageUrl: C("knight's broadsword") },
+  { id: "royal-broadsword",      name: "Royal Broadsword",         type: "One-Handed",  attack: 24, durability:  36, effect: "None",                                             location: "Hyrule Castle Sanctum chest",                       coords: "-0101, 1135, 0124", imageUrl: C("royal broadsword") },
+  { id: "royal-guard-sword",     name: "Royal Guard's Sword",      type: "One-Handed",  attack: 48, durability:  14, effect: "Breaking Point — massive dmg near break",          location: "Hyrule Castle Armory chest",                        coords: "-0380, 1053, 0107", imageUrl: C("royal guard's sword") },
+  { id: "master-sword",          name: "Master Sword",             type: "One-Handed",  attack: 30, durability: 999, effect: "Recharges; glows near Gloom; beams at full HP",    location: "Light Dragon's head (2 full stamina wheels)",       coords: "0000, 0000, 1000",  imageUrl: C("master sword") },
+  { id: "scimitar-of-seven",     name: "Scimitar of the Seven",    type: "One-Handed",  attack: 28, durability:  60, effect: "Strong Fusion — doubles fuse atk bonus",           location: "Gerudo Town, Isha's Jewelry (post-Regional)",       coords: "-3731, -2920, 0015", imageUrl: C("scimitar of the seven") },
+  { id: "gloom-sword",           name: "Gloom Sword",              type: "One-Handed",  attack: 41, durability:  15, effect: "Gloom Toll — drains permanent hearts",             location: "Phantom Ganon drop (post Gloom Hands)",             coords: "-0116, 0984, 0100" },
+  { id: "travelers-claymore",    name: "Traveler's Claymore",      type: "Two-Handed",  attack:  8, durability:  30, effect: "None",                                             location: "Necluda road chest",                                coords: "1820, -2010, 0050", imageUrl: C("traveler's claymore") },
+  { id: "royal-claymore",        name: "Royal Claymore",           type: "Two-Handed",  attack: 28, durability:  40, effect: "None",                                             location: "Hyrule Castle Throne Room chest",                   coords: "-0094, 1225, 0107", imageUrl: C("royal claymore") },
+  { id: "gloom-claymore",        name: "Gloom Claymore",           type: "Two-Handed",  attack: 54, durability:  15, effect: "Gloom Toll — drains permanent hearts",             location: "Phantom Ganon drop, Depths Coliseum",               coords: "-1048, -0840, -0500" },
+  { id: "savage-lynel-crusher",  name: "Savage Lynel Crusher",     type: "Two-Handed",  attack: 78, durability:  45, effect: "None",                                             location: "White-Maned/Silver Lynel drop",                     coords: "-0390, -0655, -0400", imageUrl: C("savage lynel crusher") },
+  { id: "boulder-breaker",       name: "Boulder Breaker",          type: "Two-Handed",  attack: 38, durability:  30, effect: "Increased digging damage; rebuild via Fugo",       location: "Goron City (regional reward)",                      coords: "1653, 2434, 0380",  imageUrl: C("boulder breaker") },
+  { id: "travelers-spear",       name: "Traveler's Spear",         type: "Spear",       attack:  4, durability:  24, effect: "None",                                             location: "Akkala camp chest",                                 coords: "3860, 2460, 0128",  imageUrl: C("traveler's spear") },
+  { id: "royal-halberd",         name: "Royal Halberd",            type: "Spear",       attack: 26, durability:  33, effect: "None",                                             location: "Hyrule Castle East wing chest",                     coords: "-0030, 1230, 0208", imageUrl: C("royal halberd") },
+  { id: "lightscale-trident",    name: "Lightscale Trident",       type: "Spear",       attack: 22, durability:  60, effect: "None; rebuild via Dento smith",                    location: "Zora's Domain reward (Sidon's quest)",              coords: "3289, 0600, 0270",  imageUrl: C("lightscale trident") },
+  { id: "savage-lynel-spear",    name: "Savage Lynel Spear",       type: "Spear",       attack: 30, durability:  35, effect: "None",                                             location: "White-Maned/Silver Lynel drop",                     coords: "-0390, -0655, -0400", imageUrl: C("savage lynel spear") },
+  { id: "zonaite-spear",         name: "Zonaite Spear",            type: "Spear",       attack: 14, durability:  35, effect: "Fuse bonus doubled",                               location: "Sky Island construct drop / Zonai ruins chest",     coords: "0612, -0913, 1460" },
 ];
 
 export interface Bow {
-  id: string; name: string; attack: number; durability: number; range: string; multishot: string; effect: string; location: string; coords: string;
+  id: string; name: string; attack: number; durability: number; range: string; multishot: string; effect: string; location: string; coords: string; imageUrl?: string;
 }
 
 export const BOWS: Bow[] = [
-  { id: "travelers-bow", name: "Traveler's Bow", attack: 5, durability: 20, range: "Medium", multishot: "1x", effect: "None", location: "Necluda road chest / common enemy drop", coords: "2050, -1870, 0090" },
-  { id: "royal-bow", name: "Royal Bow", attack: 38, durability: 25, range: "Long", multishot: "1x", effect: "None", location: "Hyrule Castle grounds chest", coords: "-0680, 1004, 0140" },
-  { id: "great-eagle-bow", name: "Great Eagle Bow", attack: 28, durability: 60, range: "Long", multishot: "3x", effect: "3x arrows, fastest draw; rebuild via Harth", location: "Rito Village (Teba's quest reward)", coords: "-3610, 1960, 0242" },
-  { id: "falcon-bow", name: "Falcon Bow", attack: 18, durability: 30, range: "Long", multishot: "1x", effect: "Fastest draw speed in game", location: "Rito Village elite chest", coords: "-3611, 1831, 0274" },
-  { id: "savage-lynel-bow", name: "Savage Lynel Bow", attack: 32, durability: 45, range: "Long", multishot: "5x", effect: "5 arrows per shot (White/Silver Lynel)", location: "White-Maned/Silver Lynel drop", coords: "-0390, -0655, -0400" },
-  { id: "phrenic-bow", name: "Phrenic Bow", attack: 8, durability: 30, range: "Long", multishot: "1x", effect: "Zoom scope", location: "Hyrule Ridge cave chest", coords: "-2138, -0390, 0233" },
-  { id: "duplex-bow", name: "Duplex Bow", attack: 14, durability: 26, range: "Long", multishot: "2x", effect: "Fires 2 arrows simultaneously", location: "East Necluda Silver Lizalfos drop", coords: "2800, -1400, 0020" },
-  { id: "zonaite-bow", name: "Zonaite Bow", attack: 14, durability: 35, range: "Medium", multishot: "1x", effect: "Fuse bonus doubled", location: "Sky Island Zonai chest", coords: "0612, -0913, 1460" },
+  { id: "travelers-bow",    name: "Traveler's Bow",    attack:  5, durability: 20, range: "Medium", multishot: "1x", effect: "None",                                      location: "Necluda road chest / common enemy drop",       coords: "2050, -1870, 0090", imageUrl: C("traveler's bow") },
+  { id: "royal-bow",        name: "Royal Bow",         attack: 38, durability: 25, range: "Long",   multishot: "1x", effect: "None",                                      location: "Hyrule Castle grounds chest",                  coords: "-0680, 1004, 0140", imageUrl: C("royal bow") },
+  { id: "great-eagle-bow",  name: "Great Eagle Bow",   attack: 28, durability: 60, range: "Long",   multishot: "3x", effect: "3x arrows, fastest draw; rebuild via Harth", location: "Rito Village (Teba's quest reward)",           coords: "-3610, 1960, 0242", imageUrl: C("great eagle bow") },
+  { id: "falcon-bow",       name: "Falcon Bow",        attack: 18, durability: 30, range: "Long",   multishot: "1x", effect: "Fastest draw speed in game",                 location: "Rito Village elite chest",                     coords: "-3611, 1831, 0274", imageUrl: C("falcon bow") },
+  { id: "savage-lynel-bow", name: "Savage Lynel Bow",  attack: 32, durability: 45, range: "Long",   multishot: "5x", effect: "5 arrows per shot (White/Silver Lynel)",     location: "White-Maned/Silver Lynel drop",                coords: "-0390, -0655, -0400", imageUrl: C("savage lynel bow") },
+  { id: "phrenic-bow",      name: "Phrenic Bow",       attack:  8, durability: 30, range: "Long",   multishot: "1x", effect: "Zoom scope",                                 location: "Hyrule Ridge cave chest",                      coords: "-2138, -0390, 0233", imageUrl: C("phrenic bow") },
+  { id: "duplex-bow",       name: "Duplex Bow",        attack: 14, durability: 26, range: "Long",   multishot: "2x", effect: "Fires 2 arrows simultaneously",               location: "East Necluda Silver Lizalfos drop",            coords: "2800, -1400, 0020", imageUrl: C("duplex bow") },
+  { id: "zonaite-bow",      name: "Zonaite Bow",       attack: 14, durability: 35, range: "Medium", multishot: "1x", effect: "Fuse bonus doubled",                         location: "Sky Island Zonai chest",                       coords: "0612, -0913, 1460" },
 ];
 
 export interface Shield {
-  id: string; name: string; defense: number; durability: number; effect: string; location: string; coords: string;
+  id: string; name: string; defense: number; durability: number; effect: string; location: string; coords: string; imageUrl?: string;
 }
 
 export const SHIELDS: Shield[] = [
-  { id: "travelers-shield", name: "Traveler's Shield", defense: 3, durability: 27, effect: "None", location: "Great Sky Island tutorial chest", coords: "0105, -1400, 1419" },
-  { id: "royal-shield", name: "Royal Shield", defense: 55, durability: 36, effect: "None", location: "Hyrule Castle Sanctum chest", coords: "-0101, 1135, 0124" },
-  { id: "hylian-shield", name: "Hylian Shield", defense: 90, durability: 800, effect: "Highest defense and durability in the game", location: "Hyrule Castle docks locked chest", coords: "-0219, 0716, -0025" },
-  { id: "royal-guard-shield", name: "Royal Guard's Shield", defense: 70, durability: 14, effect: "Breaking Point — max reflect power near break", location: "Hyrule Castle Sanctum chest", coords: "-0101, 1200, 0124" },
-  { id: "daybreaker", name: "Daybreaker", defense: 48, durability: 60, effect: "High durability; rebuild via Isha", location: "Gerudo Town, Isha reward (post-Regional)", coords: "-3731, -2920, 0015" },
-  { id: "gloom-shield", name: "Gloom Shield", defense: 20, durability: 15, effect: "Gloom Toll on block", location: "Phantom Ganon drop", coords: "-0116, 0984, 0100" },
-  { id: "savage-lynel-shield", name: "Savage Lynel Shield", defense: 62, durability: 50, effect: "None", location: "White-Maned/Silver Lynel drop, Colosseum", coords: "-0390, -0655, -0400" },
-  { id: "zonaite-shield", name: "Zonaite Shield", defense: 14, durability: 40, effect: "Fuse bonus doubled", location: "Sky Island Zonai device chest", coords: "0715, -1368, 1584" },
+  { id: "travelers-shield",    name: "Traveler's Shield",      defense:  3, durability:  27, effect: "None",                                             location: "Great Sky Island tutorial chest",                   coords: "0105, -1400, 1419", imageUrl: C("traveler's shield") },
+  { id: "royal-shield",        name: "Royal Shield",           defense: 55, durability:  36, effect: "None",                                             location: "Hyrule Castle Sanctum chest",                       coords: "-0101, 1135, 0124", imageUrl: C("royal shield") },
+  { id: "hylian-shield",       name: "Hylian Shield",          defense: 90, durability: 800, effect: "Highest defense and durability in the game",       location: "Hyrule Castle docks locked chest",                  coords: "-0219, 0716, -0025", imageUrl: C("hylian shield") },
+  { id: "royal-guard-shield",  name: "Royal Guard's Shield",   defense: 70, durability:  14, effect: "Breaking Point — max reflect power near break",    location: "Hyrule Castle Sanctum chest",                       coords: "-0101, 1200, 0124", imageUrl: C("royal guard's shield") },
+  { id: "daybreaker",          name: "Daybreaker",             defense: 48, durability:  60, effect: "High durability; rebuild via Isha",                 location: "Gerudo Town, Isha reward (post-Regional)",          coords: "-3731, -2920, 0015", imageUrl: C("daybreaker") },
+  { id: "gloom-shield",        name: "Gloom Shield",           defense: 20, durability:  15, effect: "Gloom Toll on block",                              location: "Phantom Ganon drop",                                coords: "-0116, 0984, 0100" },
+  { id: "savage-lynel-shield", name: "Savage Lynel Shield",    defense: 62, durability:  50, effect: "None",                                             location: "White-Maned/Silver Lynel drop, Colosseum",          coords: "-0390, -0655, -0400", imageUrl: C("savage lynel shield") },
+  { id: "zonaite-shield",      name: "Zonaite Shield",         defense: 14, durability:  40, effect: "Fuse bonus doubled",                               location: "Sky Island Zonai device chest",                     coords: "0715, -1368, 1584" },
 ];
 
 export interface ArmorPiece {

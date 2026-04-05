@@ -52,14 +52,23 @@ export default function GearScreen() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 100 + bottomPadding }}
           renderItem={({ item }) => (
             <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <View style={styles.cardTop}>
-                <View style={styles.cardTitleRow}>
-                  <Text style={[styles.itemName, { color: colors.foreground }]}>{item.name}</Text>
-                  <TypeBadge type={item.type} />
-                </View>
-                <View style={styles.statRow}>
-                  <StatBadge label="ATK" value={item.attack} color={colors.sheikah} />
-                  <StatBadge label="DUR" value={item.durability === 999 ? "∞" : item.durability} color={colors.mutedForeground} />
+              <View style={styles.itemHeader}>
+                {item.imageUrl ? (
+                  <Image source={{ uri: item.imageUrl }} style={styles.itemImage} contentFit="contain" transition={200} />
+                ) : (
+                  <View style={[styles.itemImagePlaceholder, { backgroundColor: colors.muted }]}>
+                    <Feather name="zap" size={18} color={colors.mutedForeground} />
+                  </View>
+                )}
+                <View style={styles.itemHeaderInfo}>
+                  <View style={styles.cardTitleRow}>
+                    <Text style={[styles.itemName, { color: colors.foreground }]}>{item.name}</Text>
+                    <TypeBadge type={item.type} />
+                  </View>
+                  <View style={styles.statRow}>
+                    <StatBadge label="ATK" value={item.attack} color={colors.sheikah} />
+                    <StatBadge label="DUR" value={item.durability === 999 ? "∞" : item.durability} color={colors.mutedForeground} />
+                  </View>
                 </View>
               </View>
               {item.effect !== "None" && (
@@ -84,13 +93,22 @@ export default function GearScreen() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 100 + bottomPadding }}
           renderItem={({ item }) => (
             <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <View style={styles.cardTop}>
-                <Text style={[styles.itemName, { color: colors.foreground }]}>{item.name}</Text>
-                <View style={styles.statRow}>
-                  <StatBadge label="ATK" value={item.attack} color={colors.sheikah} />
-                  <StatBadge label="DUR" value={item.durability} color={colors.mutedForeground} />
-                  <StatBadge label="SHOTS" value={item.multishot} color="#a78bfa" />
-                  <StatBadge label="RANGE" value={item.range} color={colors.gold} />
+              <View style={styles.itemHeader}>
+                {item.imageUrl ? (
+                  <Image source={{ uri: item.imageUrl }} style={styles.itemImage} contentFit="contain" transition={200} />
+                ) : (
+                  <View style={[styles.itemImagePlaceholder, { backgroundColor: colors.muted }]}>
+                    <Feather name="crosshair" size={18} color={colors.mutedForeground} />
+                  </View>
+                )}
+                <View style={styles.itemHeaderInfo}>
+                  <Text style={[styles.itemName, { color: colors.foreground }]}>{item.name}</Text>
+                  <View style={styles.statRow}>
+                    <StatBadge label="ATK" value={item.attack} color={colors.sheikah} />
+                    <StatBadge label="DUR" value={item.durability} color={colors.mutedForeground} />
+                    <StatBadge label="SHOTS" value={item.multishot} color="#a78bfa" />
+                    <StatBadge label="RANGE" value={item.range} color={colors.gold} />
+                  </View>
                 </View>
               </View>
               {item.effect !== "None" && (
@@ -115,11 +133,20 @@ export default function GearScreen() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 100 + bottomPadding }}
           renderItem={({ item }) => (
             <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <View style={styles.cardTop}>
-                <Text style={[styles.itemName, { color: colors.foreground }]}>{item.name}</Text>
-                <View style={styles.statRow}>
-                  <StatBadge label="DEF" value={item.defense} color={colors.sheikah} />
-                  <StatBadge label="DUR" value={item.durability} color={colors.mutedForeground} />
+              <View style={styles.itemHeader}>
+                {item.imageUrl ? (
+                  <Image source={{ uri: item.imageUrl }} style={styles.itemImage} contentFit="contain" transition={200} />
+                ) : (
+                  <View style={[styles.itemImagePlaceholder, { backgroundColor: colors.muted }]}>
+                    <Feather name="shield" size={18} color={colors.mutedForeground} />
+                  </View>
+                )}
+                <View style={styles.itemHeaderInfo}>
+                  <Text style={[styles.itemName, { color: colors.foreground }]}>{item.name}</Text>
+                  <View style={styles.statRow}>
+                    <StatBadge label="DEF" value={item.defense} color={colors.sheikah} />
+                    <StatBadge label="DUR" value={item.durability} color={colors.mutedForeground} />
+                  </View>
                 </View>
               </View>
               {item.effect !== "None" && (
@@ -240,6 +267,10 @@ const styles = StyleSheet.create({
   effectText: { fontSize: 12, flex: 1, lineHeight: 17 },
   locationRow: { flexDirection: "row", alignItems: "flex-start", gap: 6 },
   locationText: { fontSize: 12, flex: 1, lineHeight: 17 },
+  itemHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 2 },
+  itemImage: { width: 48, height: 48, borderRadius: 8 },
+  itemImagePlaceholder: { width: 48, height: 48, borderRadius: 8, alignItems: "center", justifyContent: "center" },
+  itemHeaderInfo: { flex: 1, gap: 6 },
   armorHeader: { flexDirection: "row", alignItems: "center", gap: 12 },
   armorImage: { width: 56, height: 56, borderRadius: 10 },
   armorImagePlaceholder: { width: 56, height: 56, borderRadius: 10, alignItems: "center", justifyContent: "center" },
