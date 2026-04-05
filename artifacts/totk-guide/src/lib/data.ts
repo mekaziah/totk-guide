@@ -296,10 +296,16 @@ export interface ArmorPiece {
   coords: string;
 }
 
+export interface UpgradeTier {
+  star: 1 | 2 | 3 | 4;
+  materials: string[];
+}
+
 export interface ArmorSet {
   id: string;
   name: string;
   maxStars: number;
+  upgradeTiers: UpgradeTier[];
   pieces: ArmorPiece[];
   effect: string;
   setBonus: string;
@@ -310,6 +316,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "hylian", name: "Hylian Set", maxStars: 4,
     effect: "None", setBonus: "None", upgradeBonus: "Increases base defense each tier",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Bokoblin Horn"] },
+      { star: 2, materials: ["5× Bokoblin Fang"] },
+      { star: 3, materials: ["5× Bokoblin Guts", "2× Amber"] },
+      { star: 4, materials: ["10× Bokoblin Guts", "2× Opal"] },
+    ],
     pieces: [
       { name: "Hylian Hood",     defense: 3, maxDefense: 20, location: "Lookout Landing shop (70 rupees)",    coords: "-0157, -0012, 0017" },
       { name: "Hylian Tunic",    defense: 3, maxDefense: 20, location: "Lookout Landing shop (130 rupees)",   coords: "-0157, -0012, 0017" },
@@ -319,6 +331,7 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "archaic", name: "Archaic Set", maxStars: 0,
     effect: "None — outfit worn at game start", setBonus: "None", upgradeBonus: "Cannot be upgraded",
+    upgradeTiers: [],
     pieces: [
       { name: "Archaic Tunic",   defense: 1, maxDefense: 1, location: "Worn at game start on Great Sky Island", coords: "0274, -0913, 1460" },
       { name: "Archaic Legwear", defense: 1, maxDefense: 1, location: "Worn at game start on Great Sky Island", coords: "0274, -0913, 1460" },
@@ -327,6 +340,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "snowquill", name: "Snowquill Set", maxStars: 4,
     effect: "Cold Resistance", setBonus: "Unfreezable", upgradeBonus: "Tier 2 grants Unfreezable set bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Blue Chuchu Jelly"] },
+      { star: 2, materials: ["5× Blue Chuchu Jelly", "3× Flint"] },
+      { star: 3, materials: ["5× Ice Keese Wing", "3× Amber"] },
+      { star: 4, materials: ["10× Ice Keese Wing", "3× Sapphire"] },
+    ],
     pieces: [
       { name: "Snowquill Headdress", defense: 3, maxDefense: 20, location: "Rito Village — Nekk's shop (500 rupees)",   coords: "-3608, 1843, 0232" },
       { name: "Snowquill Tunic",     defense: 3, maxDefense: 20, location: "Rito Village — Nekk's shop (600 rupees)",   coords: "-3608, 1843, 0232" },
@@ -336,6 +355,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "flamebreaker", name: "Flamebreaker Set", maxStars: 4,
     effect: "Flame Guard", setBonus: "Fireproof", upgradeBonus: "Tier 2 grants Fireproof set bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["1× Fireproof Lizard"] },
+      { star: 2, materials: ["3× Fireproof Lizard", "3× Moblin Horn"] },
+      { star: 3, materials: ["3× Smotherwing Butterfly", "2× Hinox Toenail"] },
+      { star: 4, materials: ["5× Smotherwing Butterfly", "2× Hinox Guts"] },
+    ],
     pieces: [
       { name: "Flamebreaker Helm",  defense: 3, maxDefense: 20, location: "Goron City — Ravio's Shop (600 rupees)", coords: "1638, 2460, 0382" },
       { name: "Flamebreaker Armor", defense: 5, maxDefense: 20, location: "Goron City — Ravio's Shop (700 rupees)", coords: "1638, 2460, 0382" },
@@ -345,6 +370,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "desert-voe", name: "Desert Voe Set", maxStars: 4,
     effect: "Heat Resistance", setBonus: "Shock Resistance", upgradeBonus: "Tier 2 adds Shock Resistance set bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Gibdo Bone"] },
+      { star: 2, materials: ["5× Gibdo Bone", "3× Topaz"] },
+      { star: 3, materials: ["3× Gibdo Guts", "3× Topaz"] },
+      { star: 4, materials: ["5× Gibdo Guts", "5× Topaz"] },
+    ],
     pieces: [
       { name: "Desert Voe Headband", defense: 3, maxDefense: 20, location: "Gerudo Town — Saula's shop, male entrance (450 rupees)",  coords: "-3731, -2920, 0015" },
       { name: "Desert Voe Spaulder", defense: 5, maxDefense: 20, location: "Gerudo Town — Saula's shop, male entrance (1000 rupees)", coords: "-3731, -2920, 0015" },
@@ -354,6 +385,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "zora", name: "Zora Set", maxStars: 4,
     effect: "Swim Speed Up", setBonus: "Waterfall Climb", upgradeBonus: "Tier 2 grants Waterfall Climb set bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Lizalfos Horn"] },
+      { star: 2, materials: ["3× Lizalfos Talon", "3× Opal"] },
+      { star: 3, materials: ["5× Lizalfos Tail", "3× Opal"] },
+      { star: 4, materials: ["5× Lizalfos Tail", "5× Diamond"] },
+    ],
     pieces: [
       { name: "Zora Helm",    defense: 3, maxDefense: 20, location: "Toto Lake underwater chest (Sidon's questline)",   coords: "3476, 0520, 0088" },
       { name: "Zora Armor",   defense: 3, maxDefense: 20, location: "Zora's Domain — reward from King Dorephan quest",  coords: "3289, 0600, 0270" },
@@ -363,6 +400,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "rubber", name: "Rubber Set", maxStars: 4,
     effect: "Shock Resistance", setBonus: "Unshockable", upgradeBonus: "Tier 2 grants Unshockable set bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Yellow Chuchu Jelly"] },
+      { star: 2, materials: ["5× Yellow Chuchu Jelly", "3× Flint"] },
+      { star: 3, materials: ["5× Electric Keese Wing", "3× Topaz"] },
+      { star: 4, materials: ["10× Electric Lizalfos Tail", "3× Topaz"] },
+    ],
     pieces: [
       { name: "Rubber Helm",   defense: 3, maxDefense: 20, location: "Lanayru Sky Island puzzle chest (strike 4 lightning towers)", coords: "3480, 0664, 1325" },
       { name: "Rubber Armor",  defense: 3, maxDefense: 20, location: "Cave puzzle: Whistling Hill cave chest",                      coords: "-0915, -0175, 0043" },
@@ -372,6 +415,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "climbing", name: "Climbing Gear", maxStars: 4,
     effect: "Climb Speed Up", setBonus: "Climber's Stamina (sprint-jump while climbing)", upgradeBonus: "Tier 2 grants sprint-jump climbing bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Lizalfos Horn"] },
+      { star: 2, materials: ["5× Lizalfos Talon", "3× Flint"] },
+      { star: 3, materials: ["5× Lizalfos Guts", "3× Amber"] },
+      { star: 4, materials: ["5× Lizalfos Tail", "3× Diamond"] },
+    ],
     pieces: [
       { name: "Climbing Bandana", defense: 3, maxDefense: 20, location: "Ploymus Mountain cave chest",  coords: "3561, 0765, 0392" },
       { name: "Climbing Gear",    defense: 3, maxDefense: 20, location: "Upland Lindor cave chest",     coords: "-1574, 1336, 0272" },
@@ -381,6 +430,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "barbarian", name: "Barbarian Set", maxStars: 4,
     effect: "Attack Up", setBonus: "Charge Attack Stamina Up", upgradeBonus: "Tier 2 grants Charge Attack Stamina Up",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Lynel Horn"] },
+      { star: 2, materials: ["3× Lynel Hoof"] },
+      { star: 3, materials: ["3× Lynel Guts", "2× Amber"] },
+      { star: 4, materials: ["5× Lynel Guts", "3× Ruby"] },
+    ],
     pieces: [
       { name: "Barbarian Helm",      defense: 3, maxDefense: 20, location: "Crenel Hills cave (through false wall puzzle)", coords: "-0148, 1250, 0148" },
       { name: "Barbarian Armor",     defense: 3, maxDefense: 20, location: "Dracozu Lake shrine ruins cave chest",          coords: "1548, -2630, 0025" },
@@ -390,6 +445,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "stealth", name: "Stealth Set", maxStars: 4,
     effect: "Stealth Up", setBonus: "Night Speed Up", upgradeBonus: "Tier 2 grants Night Speed Up set bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Sunset Firefly"] },
+      { star: 2, materials: ["5× Sunset Firefly", "3× Amber"] },
+      { star: 3, materials: ["3× Silent Princess", "3× Opal"] },
+      { star: 4, materials: ["5× Silent Princess", "5× Diamond"] },
+    ],
     pieces: [
       { name: "Stealth Mask",        defense: 3, maxDefense: 20, location: "Kakariko Village cave chest — behind the store",    coords: "1816, -1030, 0116" },
       { name: "Stealth Chest Guard", defense: 3, maxDefense: 20, location: "Kakariko Village shop (Enchanted, 500 rupees)",     coords: "1816, -1030, 0116" },
@@ -399,6 +460,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "soldiers", name: "Soldier's Set", maxStars: 4,
     effect: "None", setBonus: "None", upgradeBonus: "High defense per tier",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Moblin Horn"] },
+      { star: 2, materials: ["5× Moblin Fang"] },
+      { star: 3, materials: ["5× Moblin Guts", "2× Amber"] },
+      { star: 4, materials: ["10× Moblin Guts", "1× Star Fragment"] },
+    ],
     pieces: [
       { name: "Soldier's Helm",    defense: 5, maxDefense: 20, location: "Hyrule Castle grounds — chest near Lockup entrance", coords: "-0536, 0806, 0090" },
       { name: "Soldier's Armor",   defense: 5, maxDefense: 20, location: "Hyrule Castle West tower chest",                     coords: "-0765, 0993, 0108" },
@@ -408,6 +475,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "depths-armor", name: "Armor of the Depths", maxStars: 4,
     effect: "Gloom Resistance", setBonus: "Gloom HP restored by sleeping at campfire", upgradeBonus: "Tier 2 grants Gloom Resistance bonus",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Puffshroom", "2× Luminous Stone"] },
+      { star: 2, materials: ["5× Puffshroom", "3× Luminous Stone"] },
+      { star: 3, materials: ["5× Bubbulfrog Goo", "3× Topaz"] },
+      { star: 4, materials: ["5× Bubbulfrog Goo", "5× Diamond"] },
+    ],
     pieces: [
       { name: "Hood of the Depths",    defense: 5, maxDefense: 20, location: "Bargainer Statue — Hyrule Castle Depths (200 Poes)", coords: "-0195, 0830, -0600" },
       { name: "Tunic of the Depths",   defense: 5, maxDefense: 20, location: "Bargainer Statue — Hyrule Castle Depths (300 Poes)", coords: "-0195, 0830, -0600" },
@@ -417,6 +490,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "phantom", name: "Phantom Set", maxStars: 4,
     effect: "Guardian Resist Up", setBonus: "Guardian Resist Up++ (stacks)", upgradeBonus: "Improves Guardian Resist Up per tier",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Gibdo Bone", "3× Bubbulfrog Goo"] },
+      { star: 2, materials: ["5× Gibdo Bone", "3× Amber"] },
+      { star: 3, materials: ["3× Gibdo Guts", "3× Ruby"] },
+      { star: 4, materials: ["5× Gibdo Guts", "5× Diamond"] },
+    ],
     pieces: [
       { name: "Phantom Helm",    defense: 8, maxDefense: 28, location: "Bargainer Statue — Wellspring of Power area, Depths (150 Poes)", coords: "2358, 2544, -0600" },
       { name: "Phantom Armor",   defense: 8, maxDefense: 28, location: "Bargainer Statue — Wellspring of Courage Depths (150 Poes)",     coords: "0818, -2536, -0600" },
@@ -426,6 +505,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "evil-spirit", name: "Evil Spirit Set", maxStars: 4,
     effect: "Bone Attack Up", setBonus: "Bone Atk Up++ (stacks)", upgradeBonus: "Improves Bone Atk Up per tier",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Bokoblin Fang", "3× Lizalfos Talon"] },
+      { star: 2, materials: ["5× Moblin Fang", "3× Amber"] },
+      { star: 3, materials: ["5× Hinox Toenail", "3× Ruby"] },
+      { star: 4, materials: ["3× Hinox Guts", "5× Diamond"] },
+    ],
     pieces: [
       { name: "Evil Spirit Mask",    defense: 5, maxDefense: 20, location: "North Lomei Labyrinth — sky island chest (above Akkala)", coords: "4441, 3688, 0720" },
       { name: "Evil Spirit Armor",   defense: 5, maxDefense: 20, location: "South Lomei Labyrinth — depths level solution chest",     coords: "-4504, -3632, -0520" },
@@ -435,6 +520,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "fierce-deity", name: "Fierce Deity Set", maxStars: 4,
     effect: "Attack Up", setBonus: "Attack Up++ (stacks)", upgradeBonus: "Improves Attack Up per tier",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Lynel Hoof"] },
+      { star: 2, materials: ["5× Lynel Hoof", "3× Amber"] },
+      { star: 3, materials: ["3× Lynel Guts", "3× Ruby"] },
+      { star: 4, materials: ["5× Lynel Guts", "5× Diamond"] },
+    ],
     pieces: [
       { name: "Fierce Deity Mask",  defense: 5, maxDefense: 20, location: "Akkala cave — Misko's Cave of Treasures I (chest marked by sign)", coords: "3997, 1631, 0103" },
       { name: "Fierce Deity Armor", defense: 5, maxDefense: 20, location: "Lanayru cave — Misko's Cave of Treasures II",                      coords: "3480, 0664, 0050" },
@@ -444,6 +535,7 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "ancient-hero", name: "Ancient Hero's Aspect", maxStars: 0,
     effect: "Disguises Link as an ancient hero; glows green", setBonus: "None (cosmetic transformation)", upgradeBonus: "Cannot be upgraded",
+    upgradeTiers: [],
     pieces: [
       { name: "Ancient Hero's Aspect", defense: 0, maxDefense: 0, location: "Complete all 152 shrines — reward chest at Temple of Time (Great Sky Island)", coords: "0388, -1660, 2299" },
     ],
@@ -451,6 +543,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "sand-boots", name: "Sand & Snow Boots", maxStars: 4,
     effect: "Move at full speed on sand / snow", setBonus: "None (individual items)", upgradeBonus: "Defense improves per tier",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Amber"] },
+      { star: 2, materials: ["5× Amber", "3× Opal"] },
+      { star: 3, materials: ["5× Opal", "3× Topaz"] },
+      { star: 4, materials: ["3× Sapphire", "3× Topaz"] },
+    ],
     pieces: [
       { name: "Sand Boots", defense: 3, maxDefense: 20, location: "South Akkala Stable secret stone merchant (300 rupees)", coords: "3792, 1626, 0109" },
       { name: "Snow Boots", defense: 3, maxDefense: 20, location: "Rito Stable secret stone merchant (300 rupees)",         coords: "-3462, 1519, 0219" },
@@ -459,6 +557,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "glide", name: "Glide Set", maxStars: 4,
     effect: "Skydiving speed and maneuvering", setBonus: "Skydive Mobility Up", upgradeBonus: "Tier 2 grants Skydive Mobility Up",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Aerocuda Wing"] },
+      { star: 2, materials: ["5× Aerocuda Wing", "3× Amber"] },
+      { star: 3, materials: ["3× Aerocuda Eyeball", "3× Opal"] },
+      { star: 4, materials: ["5× Aerocuda Eyeball", "3× Sapphire"] },
+    ],
     pieces: [
       { name: "Glide Mask",   defense: 3, maxDefense: 20, location: "Sky Island near Wind Temple — chest at top of the sky fortress", coords: "-2360, 2540, 1200" },
       { name: "Glide Shirt",  defense: 3, maxDefense: 20, location: "Sky Island puzzle area — chest near Valor Island",               coords: "2832, -1880, 1250" },
@@ -468,6 +572,12 @@ export const ARMOR: ArmorSet[] = [
   {
     id: "zonaite", name: "Zonaite Set", maxStars: 4,
     effect: "Charge your Energy Cell faster", setBonus: "Faster Energy Cell recharge", upgradeBonus: "Further charge rate per tier",
+    upgradeTiers: [
+      { star: 1, materials: ["3× Construct Horn"] },
+      { star: 2, materials: ["5× Construct Horn", "3× Zonaite"] },
+      { star: 3, materials: ["3× Large Zonaite", "3× Amber"] },
+      { star: 4, materials: ["5× Large Zonaite", "3× Opal"] },
+    ],
     pieces: [
       { name: "Zonaite Helm",        defense: 3, maxDefense: 20, location: "Sky Island — Construct Barracks chest (Great Sky Island area)", coords: "0480, -1560, 1408" },
       { name: "Zonaite Waistguard",  defense: 3, maxDefense: 20, location: "Sky Island — South Hyrule Sky Archipelago large chest",         coords: "0200, -1400, 1462" },

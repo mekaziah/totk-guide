@@ -1,5 +1,6 @@
-import { Navigation, MapPin, Star } from "lucide-react";
+import { Navigation, MapPin, Star, Sparkles } from "lucide-react";
 import { ARMOR, type ArmorSet } from "@/lib/data";
+import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { VideoLink } from "@/components/VideoLink";
 import { ItemImage } from "@/components/ItemImage";
@@ -8,8 +9,11 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+const TIER_COLORS = ["text-amber-400", "text-amber-300", "text-yellow-300", "text-yellow-200"] as const;
+
 function ArmorCard({ item, idx }: { item: ArmorSet; idx: number }) {
   const imageSrc = `${import.meta.env.BASE_URL}armor/${item.id}.png`;
+  const [showMaterials, setShowMaterials] = useState(false);
 
   return (
     <motion.div
@@ -70,6 +74,47 @@ function ArmorCard({ item, idx }: { item: ArmorSet; idx: number }) {
             <p className="text-muted-foreground uppercase tracking-wider text-xs mb-1">Upgrade Bonus</p>
             <p className="text-foreground/70 text-xs">{item.upgradeBonus}</p>
           </div>
+
+          {/* Upgrade Materials — collapsible */}
+          {item.upgradeTiers.length > 0 && (
+            <div className="border-t border-border/40 pt-3">
+              <button
+                onClick={() => setShowMaterials((v) => !v)}
+                className="flex items-center justify-between w-full group"
+              >
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-yellow-400" />
+                  <span className="text-muted-foreground uppercase tracking-wider text-xs group-hover:text-foreground transition-colors">
+                    Upgrade Materials
+                  </span>
+                  <span className="text-xs text-muted-foreground/50">(per piece)</span>
+                </div>
+                <span className="text-muted-foreground/60 text-xs">{showMaterials ? "▲ hide" : "▼ show"}</span>
+              </button>
+
+              {showMaterials && (
+                <div className="mt-2.5 space-y-1.5">
+                  {item.upgradeTiers.map((tier) => (
+                    <div key={tier.star} className="flex items-start gap-2 bg-muted/20 rounded px-2.5 py-1.5">
+                      <div className="flex items-center gap-0.5 shrink-0 mt-0.5">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-2.5 w-2.5 ${i < tier.star ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/20"}`}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                        {tier.materials.map((mat) => (
+                          <span key={mat} className={`text-xs ${TIER_COLORS[tier.star - 1]}`}>{mat}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Individual pieces with images + coordinates */}
           <div className="border-t border-border/40 pt-3 space-y-3 flex-1">
