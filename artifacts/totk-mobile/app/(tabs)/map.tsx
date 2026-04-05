@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Dimensions,
+  LayoutChangeEvent,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 import Svg, {
   Circle,
   G,
@@ -23,6 +30,8 @@ import { Icon } from "@/components/Icon";
 
 const MAP_W = 2200;
 const MAP_H = 1600;
+const DOT_R = 10;
+const HIT_R = 30;
 
 function parseCoords(coords: string): { x: number; y: number } | null {
   const parts = coords.split(",").map((s) => parseFloat(s.trim()));
@@ -72,9 +81,8 @@ export default function MapScreen() {
   const { isCompleted } = useTracker();
   const [selected, setSelected] = useState<ShrineInfo | null>(null);
   const [filter, setFilter] = useState<"All" | "Puzzle" | "Combat" | "Blessing">("All");
-
-  const topPadding = Platform.OS === "web" ? 67 : insets.top;
-  const bottomPadding = Platform.OS === "web" ? 34 : 0;
+  const [containerH, setContainerH] = useState(400);
+  const [containerW, setContainerW] = useState(Dimensions.get("window").width);
 
   const shrines: ShrineInfo[] = SHRINES.map((s) => {
     const gc = parseCoords(s.coords);
@@ -83,8 +91,82 @@ export default function MapScreen() {
   }).filter((s) => s.mx > 0 && s.my > 0);
 
   const visible = shrines.filter((s) => filter === "All" || s.type === filter);
+  const visibleRef = useRef(visible);
+  useEffect(() => { visibleRef.current = visible; }, [visible]);
 
-  const HIT = 18;
+  const selectedRef = useRef(selected);
+  useEffect(() => { selectedRef.current = selected; }, [selected]);
+
+  const worldCenter = toMapXY(0, 0);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const savedX = useSharedValue(0);
+  const savedY = useSharedValue(0);
+  const containerWRef = useRef(containerW);
+  const containerHRef = useRef(containerH);
+
+  const initDone = useRef(false);
+
+  const onContainerLayout = useCallback((e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout;
+    setContainerW(width);
+    setContainerH(height);
+    containerWRef.current = width;
+    containerHRef.current = height;
+    if (!initDone.current) {
+      initDone.current = true;
+      const ix = Math.min(0, Math.max(-(MAP_W - width), width / 2 - worldCenter.x));
+      const iy = Math.min(0, Math.max(-(MAP_H - height), height / 2 - worldCenter.y));
+      translateX.value = ix;
+      translateY.value = iy;
+      savedX.value = ix;
+      savedY.value = iy;
+    }
+  }, []);
+
+  const handleTap = useCallback(
+    (ex: number, ey: number, tx: number, ty: number) => {
+      const mapX = ex - tx;
+      const mapY = ey - ty;
+      const found = visibleRef.current.find((s) => {
+        const dx = s.mx - mapX;
+        const dy = s.my - mapY;
+        return dx * dx + dy * dy < HIT_R * HIT_R;
+      });
+      setSelected(found !== undefined ? found : null);
+    },
+    []
+  );
+
+  const pan = Gesture.Pan()
+    .onStart(() => {
+      savedX.value = translateX.value;
+      savedY.value = translateY.value;
+    })
+    .onUpdate((e) => {
+      const cw = containerWRef.current;
+      const ch = containerHRef.current;
+      const nx = savedX.value + e.translationX;
+      const ny = savedY.value + e.translationY;
+      translateX.value = Math.min(0, Math.max(-(MAP_W - cw), nx));
+      translateY.value = Math.min(0, Math.max(-(MAP_H - ch), ny));
+    });
+
+  const tap = Gesture.Tap().onEnd((e) => {
+    runOnJS(handleTap)(e.x, e.y, translateX.value, translateY.value);
+  });
+
+  const gesture = Gesture.Race(tap, pan);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+    ],
+  }));
+
+  const topPadding = Platform.OS === "web" ? 67 : insets.top;
+  const bottomPadding = Platform.OS === "web" ? 34 : 0;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -138,158 +220,127 @@ export default function MapScreen() {
         </View>
       </View>
 
-      <ScrollView
-        horizontal
-        style={styles.mapScroll}
-        contentContainerStyle={styles.mapContent}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        maximumZoomScale={3}
-        minimumZoomScale={0.4}
-        bouncesZoom
-        scrollEventThrottle={16}
-      >
-        <ScrollView
-          style={{ width: MAP_W, height: MAP_H }}
-          contentContainerStyle={{ width: MAP_W, height: MAP_H }}
-          showsVerticalScrollIndicator={false}
-          nestedScrollEnabled
+      <GestureDetector gesture={gesture}>
+        <View
+          style={styles.mapContainer}
+          onLayout={onContainerLayout}
+          collapsable={false}
         >
-          <View style={{ width: MAP_W, height: MAP_H, position: "relative" }}>
-          <Svg width={MAP_W} height={MAP_H}>
-            <Rect
-              x={0}
-              y={0}
-              width={MAP_W}
-              height={MAP_H}
-              fill="#081220"
-              onPress={() => setSelected(null)}
-            />
+          <Animated.View style={[{ width: MAP_W, height: MAP_H }, animStyle]}>
+            <Svg width={MAP_W} height={MAP_H}>
+              <Rect x={0} y={0} width={MAP_W} height={MAP_H} fill="#081220" />
 
-            {REGION_ZONES.map((rz, i) => {
-              const tl = toMapXY(rz.gx, rz.gy + rz.gh);
-              const br = toMapXY(rz.gx + rz.gw, rz.gy);
-              return (
-                <Rect
-                  key={i}
-                  x={tl.x}
-                  y={tl.y}
-                  width={br.x - tl.x}
-                  height={br.y - tl.y}
-                  fill={rz.color}
-                  opacity={0.85}
-                />
-              );
-            })}
+              {REGION_ZONES.map((rz, i) => {
+                const tl = toMapXY(rz.gx, rz.gy + rz.gh);
+                const br = toMapXY(rz.gx + rz.gw, rz.gy);
+                return (
+                  <Rect
+                    key={i}
+                    x={tl.x}
+                    y={tl.y}
+                    width={br.x - tl.x}
+                    height={br.y - tl.y}
+                    fill={rz.color}
+                    opacity={0.85}
+                  />
+                );
+              })}
 
-            {[...Array(11)].map((_, i) => {
-              const x = (i / 10) * MAP_W;
-              return (
-                <Line
-                  key={`vl-${i}`}
-                  x1={x}
-                  y1={0}
-                  x2={x}
-                  y2={MAP_H}
-                  stroke="#1e3a5f"
-                  strokeWidth={0.5}
-                  opacity={0.4}
-                />
-              );
-            })}
-            {[...Array(9)].map((_, i) => {
-              const y = (i / 8) * MAP_H;
-              return (
-                <Line
-                  key={`hl-${i}`}
-                  x1={0}
-                  y1={y}
-                  x2={MAP_W}
-                  y2={y}
-                  stroke="#1e3a5f"
-                  strokeWidth={0.5}
-                  opacity={0.4}
-                />
-              );
-            })}
+              {[...Array(11)].map((_, i) => {
+                const x = (i / 10) * MAP_W;
+                return (
+                  <Line
+                    key={`vl-${i}`}
+                    x1={x} y1={0} x2={x} y2={MAP_H}
+                    stroke="#1e3a5f" strokeWidth={0.5} opacity={0.4}
+                  />
+                );
+              })}
+              {[...Array(9)].map((_, i) => {
+                const y = (i / 8) * MAP_H;
+                return (
+                  <Line
+                    key={`hl-${i}`}
+                    x1={0} y1={y} x2={MAP_W} y2={y}
+                    stroke="#1e3a5f" strokeWidth={0.5} opacity={0.4}
+                  />
+                );
+              })}
 
-            {(() => {
-              const c = toMapXY(0, 0);
-              return (
-                <>
-                  <Line x1={c.x - 12} y1={c.y} x2={c.x + 12} y2={c.y} stroke="#4fc3a1" strokeWidth={1} />
-                  <Line x1={c.x} y1={c.y - 12} x2={c.x} y2={c.y + 12} stroke="#4fc3a1" strokeWidth={1} />
-                  <SvgText x={c.x + 6} y={c.y - 6} fill="#4fc3a1" fontSize={9} opacity={0.7}>
-                    0,0
+              {(() => {
+                const c = toMapXY(0, 0);
+                return (
+                  <>
+                    <Line x1={c.x - 14} y1={c.y} x2={c.x + 14} y2={c.y} stroke="#4fc3a1" strokeWidth={1.5} />
+                    <Line x1={c.x} y1={c.y - 14} x2={c.x} y2={c.y + 14} stroke="#4fc3a1" strokeWidth={1.5} />
+                    <SvgText x={c.x + 8} y={c.y - 8} fill="#4fc3a1" fontSize={11} opacity={0.7}>0,0</SvgText>
+                  </>
+                );
+              })()}
+
+              {[
+                { label: "AKKALA", gx: 3800, gy: 2800 },
+                { label: "ELDIN", gx: 1600, gy: 2600 },
+                { label: "LANAYRU", gx: 3000, gy: 800 },
+                { label: "CENTRAL HYRULE", gx: -200, gy: 400 },
+                { label: "GERUDO", gx: -4200, gy: -400 },
+                { label: "HEBRA", gx: -3800, gy: 2400 },
+                { label: "NECLUDA", gx: 1800, gy: -1000 },
+                { label: "FARON", gx: 600, gy: -2800 },
+              ].map((rl) => {
+                const { x, y } = toMapXY(rl.gx, rl.gy);
+                return (
+                  <SvgText
+                    key={rl.label}
+                    x={x} y={y}
+                    fill="#4fc3a1"
+                    fontSize={14}
+                    fontWeight="bold"
+                    opacity={0.3}
+                    textAnchor="middle"
+                  >
+                    {rl.label}
                   </SvgText>
-                </>
-              );
-            })()}
+                );
+              })}
 
-            {[
-              { label: "AKKALA", gx: 3800, gy: 2800 },
-              { label: "ELDIN", gx: 1600, gy: 2600 },
-              { label: "LANAYRU", gx: 3000, gy: 800 },
-              { label: "CENTRAL\nHYRULE", gx: -200, gy: 400 },
-              { label: "GERUDO", gx: -4200, gy: -400 },
-              { label: "HEBRA", gx: -3800, gy: 2400 },
-              { label: "NECLUDA", gx: 1800, gy: -1000 },
-              { label: "FARON", gx: 600, gy: -2800 },
-            ].map((rl) => {
-              const { x, y } = toMapXY(rl.gx, rl.gy);
-              return (
-                <SvgText
-                  key={rl.label}
-                  x={x}
-                  y={y}
-                  fill="#4fc3a1"
-                  fontSize={13}
-                  fontWeight="bold"
-                  opacity={0.35}
-                  textAnchor="middle"
-                >
-                  {rl.label}
-                </SvgText>
-              );
-            })}
-
-            {visible.map((s) => {
-              const done = isCompleted("shrines", s.id);
-              const color = TYPE_COLORS[s.type] ?? "#4fc3a1";
-              const isSelected = selected?.id === s.id;
-              return (
-                <G key={s.id} onPress={() => setSelected(isSelected ? null : s)}>
-                  {isSelected && (
-                    <Circle cx={s.mx} cy={s.my} r={14} fill={color} opacity={0.25} />
-                  )}
-                  <Circle
-                    cx={s.mx}
-                    cy={s.my}
-                    r={HIT}
-                    fill="transparent"
-                  />
-                  <Circle
-                    cx={s.mx}
-                    cy={s.my}
-                    r={isSelected ? 8 : 6}
-                    fill={done ? "#081220" : color}
-                    stroke={color}
-                    strokeWidth={done ? 1.5 : 0}
-                    opacity={done ? 0.6 : 1}
-                  />
-                  {isSelected && (
-                    <SvgText x={s.mx} y={s.my - 14} fill={color} fontSize={9} textAnchor="middle" fontWeight="bold">
-                      {s.name.replace(" Shrine", "")}
-                    </SvgText>
-                  )}
-                </G>
-              );
-            })}
-
-          </Svg>
-          </View>
-        </ScrollView>
-      </ScrollView>
+              {visible.map((s) => {
+                const done = isCompleted("shrines", s.id);
+                const color = TYPE_COLORS[s.type] ?? "#4fc3a1";
+                const isSel = selected?.id === s.id;
+                return (
+                  <G key={s.id}>
+                    {isSel && (
+                      <Circle cx={s.mx} cy={s.my} r={22} fill={color} opacity={0.25} />
+                    )}
+                    <Circle
+                      cx={s.mx}
+                      cy={s.my}
+                      r={isSel ? DOT_R + 3 : DOT_R}
+                      fill={done ? "#081220" : color}
+                      stroke={color}
+                      strokeWidth={done ? 2.5 : 0}
+                      opacity={done ? 0.6 : 1}
+                    />
+                    {isSel && (
+                      <SvgText
+                        x={s.mx}
+                        y={s.my - 18}
+                        fill={color}
+                        fontSize={11}
+                        textAnchor="middle"
+                        fontWeight="bold"
+                      >
+                        {s.name.replace(" Shrine", "")}
+                      </SvgText>
+                    )}
+                  </G>
+                );
+              })}
+            </Svg>
+          </Animated.View>
+        </View>
+      </GestureDetector>
 
       <View style={[styles.legend, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
         <View style={styles.legendRow}>
@@ -363,8 +414,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   filterLabel: { fontSize: 12, fontWeight: "600" },
-  mapScroll: { flex: 1 },
-  mapContent: { width: MAP_W, height: MAP_H },
+  mapContainer: {
+    flex: 1,
+    overflow: "hidden",
+  },
   legend: {
     paddingHorizontal: 16,
     paddingVertical: 10,
