@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Alert, FlatList, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -6,6 +5,7 @@ import { useColors } from "@/hooks/useColors";
 import { useTracker } from "@/context/TrackerContext";
 import { TRACKER_CATEGORIES } from "@/lib/data";
 import { ProgressRing } from "@/components/ProgressRing";
+import { Icon } from "@/components/Icon";
 import * as Haptics from "expo-haptics";
 
 const CAT_COLORS: Record<string, string> = {
@@ -44,7 +44,7 @@ export default function TrackerScreen() {
               { text: "Reset", style: "destructive", onPress: () => {} },
             ])}
           >
-            <Feather name="refresh-cw" size={18} color={colors.mutedForeground} />
+            <Icon name="refresh-cw" size={18} color={colors.mutedForeground} />
           </TouchableOpacity>
         </View>
 
@@ -95,7 +95,7 @@ export default function TrackerScreen() {
                   <Text style={[styles.catLabel, { color: isActive ? color : colors.foreground }]}>{cat.label}</Text>
                   <Text style={[styles.catCount, { color: colors.mutedForeground }]}>{prog.count} / {cat.total}</Text>
                 </View>
-                <Feather name={isActive ? "chevron-up" : "chevron-right"} size={16} color={colors.mutedForeground} />
+                <Icon name={isActive ? "chevron-up" : "chevron-right"} size={16} color={colors.mutedForeground} />
               </TouchableOpacity>
             );
           })}
@@ -118,7 +118,7 @@ export default function TrackerScreen() {
                   activeOpacity={0.75}
                 >
                   <View style={[styles.itemCheck, { borderColor: done ? activeColor : colors.border, backgroundColor: done ? activeColor : "transparent" }]}>
-                    {done && <Feather name="check" size={11} color={colors.background} />}
+                    {done && <Icon name="check" size={11} color={colors.background} />}
                   </View>
                   <View style={styles.itemInfo}>
                     <Text style={[styles.itemLabel, { color: done ? colors.mutedForeground : colors.foreground, textDecorationLine: done ? "line-through" : "none" }]}>

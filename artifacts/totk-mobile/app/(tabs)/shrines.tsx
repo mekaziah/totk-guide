@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import { FlatList, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -6,6 +5,7 @@ import { useColors } from "@/hooks/useColors";
 import { SHRINES } from "@/lib/data";
 import { TypeBadge } from "@/components/TypeBadge";
 import { useTracker } from "@/context/TrackerContext";
+import { Icon } from "@/components/Icon";
 import * as Haptics from "expo-haptics";
 
 const REGIONS = ["All", "Sky Islands", "Central Hyrule", "Akkala", "Eldin", "Lanayru", "Necluda", "Faron", "Hebra", "Gerudo", "Dueling Peaks"];
@@ -47,7 +47,7 @@ export default function ShrinesScreen() {
         </View>
 
         <View style={[styles.searchBox, { backgroundColor: colors.muted, borderColor: colors.border }]}>
-          <Feather name="search" size={16} color={colors.mutedForeground} />
+          <Icon name="search" size={16} color={colors.mutedForeground} />
           <TextInput
             style={[styles.searchInput, { color: colors.foreground }]}
             placeholder="Search shrines..."
@@ -57,7 +57,7 @@ export default function ShrinesScreen() {
           />
           {search ? (
             <TouchableOpacity onPress={() => setSearch("")}>
-              <Feather name="x" size={16} color={colors.mutedForeground} />
+              <Icon name="x" size={16} color={colors.mutedForeground} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -103,7 +103,7 @@ export default function ShrinesScreen() {
               activeOpacity={0.8}
             >
               <View style={[styles.shrineCheck, { borderColor: done ? colors.sheikah : colors.border, backgroundColor: done ? colors.sheikah : "transparent" }]}>
-                {done && <Feather name="check" size={12} color={colors.primaryForeground} />}
+                {done && <Icon name="check" size={12} color={colors.primaryForeground} />}
               </View>
               <View style={styles.shrineInfo}>
                 <Text style={[styles.shrineName, { color: done ? colors.mutedForeground : colors.foreground, textDecorationLine: done ? "line-through" : "none" }]}>
@@ -122,7 +122,7 @@ export default function ShrinesScreen() {
         }}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Feather name="triangle" size={32} color={colors.border} />
+            <Icon name="triangle" size={32} color={colors.border} />
             <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>No shrines found</Text>
           </View>
         }

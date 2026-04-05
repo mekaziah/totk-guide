@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import React, { useState } from "react";
 import {
@@ -22,6 +21,7 @@ import { useColors } from "@/hooks/useColors";
 import { SHRINES } from "@/lib/data";
 import { TypeBadge } from "@/components/TypeBadge";
 import { useTracker } from "@/context/TrackerContext";
+import { Icon } from "@/components/Icon";
 
 const MAP_W = 2200;
 const MAP_H = 1600;
@@ -331,17 +331,17 @@ export default function MapScreen() {
               <TypeBadge type={selected.type} />
             </View>
             <TouchableOpacity onPress={() => setSelected(null)}>
-              <Feather name="x" size={18} color={colors.mutedForeground} />
+              <Icon name="x" size={18} color={colors.mutedForeground} />
             </TouchableOpacity>
           </View>
           <Text style={[styles.infoHint, { color: colors.sheikah }]}>{selected.hint}</Text>
           <View style={styles.infoMeta}>
             <View style={styles.infoMetaItem}>
-              <Feather name="map-pin" size={12} color={colors.mutedForeground} />
+              <Icon name="map-pin" size={12} color={colors.mutedForeground} />
               <Text style={[styles.infoMetaText, { color: colors.mutedForeground }]}>{selected.region}</Text>
             </View>
             <View style={styles.infoMetaItem}>
-              <Feather name="hash" size={12} color={colors.mutedForeground} />
+              <Icon name="hash" size={12} color={colors.mutedForeground} />
               <Text style={[styles.infoMetaText, { color: colors.mutedForeground }]}>{selected.coords}</Text>
             </View>
           </View>

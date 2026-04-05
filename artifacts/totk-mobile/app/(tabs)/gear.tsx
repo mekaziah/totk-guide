@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { FlatList, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -7,10 +6,11 @@ import { useColors } from "@/hooks/useColors";
 import { WEAPONS, BOWS, SHIELDS, ARMOR } from "@/lib/data";
 import { TypeBadge } from "@/components/TypeBadge";
 import { StatBadge } from "@/components/StatBadge";
+import { Icon } from "@/components/Icon";
 
 type Tab = "weapons" | "bows" | "shields" | "armor";
 
-const TABS: { id: Tab; label: string; icon: keyof typeof Feather.glyphMap }[] = [
+const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: "weapons", label: "Weapons", icon: "zap" },
   { id: "bows", label: "Bows", icon: "crosshair" },
   { id: "shields", label: "Shields", icon: "shield" },
@@ -38,7 +38,7 @@ export default function GearScreen() {
               onPress={() => setTab(t.id)}
               style={[styles.tabChip, { backgroundColor: tab === t.id ? colors.gold : colors.muted, borderColor: tab === t.id ? colors.gold : colors.border }]}
             >
-              <Feather name={t.icon} size={14} color={tab === t.id ? colors.primaryForeground : colors.mutedForeground} />
+              <Icon name={t.icon} size={14} color={tab === t.id ? colors.primaryForeground : colors.mutedForeground} />
               <Text style={[styles.tabLabel, { color: tab === t.id ? colors.primaryForeground : colors.mutedForeground }]}>{t.label}</Text>
             </TouchableOpacity>
           ))}
@@ -57,7 +57,7 @@ export default function GearScreen() {
                   <Image source={{ uri: item.imageUrl }} style={styles.itemImage} contentFit="contain" transition={200} />
                 ) : (
                   <View style={[styles.itemImagePlaceholder, { backgroundColor: colors.muted }]}>
-                    <Feather name="zap" size={18} color={colors.mutedForeground} />
+                    <Icon name="zap" size={18} color={colors.mutedForeground} />
                   </View>
                 )}
                 <View style={styles.itemHeaderInfo}>
@@ -73,12 +73,12 @@ export default function GearScreen() {
               </View>
               {item.effect !== "None" && (
                 <View style={[styles.effectRow, { backgroundColor: colors.gold + "18" }]}>
-                  <Feather name="zap" size={12} color={colors.gold} />
+                  <Icon name="zap" size={12} color={colors.gold} />
                   <Text style={[styles.effectText, { color: colors.gold }]}>{item.effect}</Text>
                 </View>
               )}
               <View style={styles.locationRow}>
-                <Feather name="map-pin" size={12} color={colors.mutedForeground} />
+                <Icon name="map-pin" size={12} color={colors.mutedForeground} />
                 <Text style={[styles.locationText, { color: colors.mutedForeground }]}>{item.location}</Text>
               </View>
             </View>
@@ -98,7 +98,7 @@ export default function GearScreen() {
                   <Image source={{ uri: item.imageUrl }} style={styles.itemImage} contentFit="contain" transition={200} />
                 ) : (
                   <View style={[styles.itemImagePlaceholder, { backgroundColor: colors.muted }]}>
-                    <Feather name="crosshair" size={18} color={colors.mutedForeground} />
+                    <Icon name="crosshair" size={18} color={colors.mutedForeground} />
                   </View>
                 )}
                 <View style={styles.itemHeaderInfo}>
@@ -113,12 +113,12 @@ export default function GearScreen() {
               </View>
               {item.effect !== "None" && (
                 <View style={[styles.effectRow, { backgroundColor: colors.gold + "18" }]}>
-                  <Feather name="zap" size={12} color={colors.gold} />
+                  <Icon name="zap" size={12} color={colors.gold} />
                   <Text style={[styles.effectText, { color: colors.gold }]}>{item.effect}</Text>
                 </View>
               )}
               <View style={styles.locationRow}>
-                <Feather name="map-pin" size={12} color={colors.mutedForeground} />
+                <Icon name="map-pin" size={12} color={colors.mutedForeground} />
                 <Text style={[styles.locationText, { color: colors.mutedForeground }]}>{item.location}</Text>
               </View>
             </View>
@@ -138,7 +138,7 @@ export default function GearScreen() {
                   <Image source={{ uri: item.imageUrl }} style={styles.itemImage} contentFit="contain" transition={200} />
                 ) : (
                   <View style={[styles.itemImagePlaceholder, { backgroundColor: colors.muted }]}>
-                    <Feather name="shield" size={18} color={colors.mutedForeground} />
+                    <Icon name="shield" size={18} color={colors.mutedForeground} />
                   </View>
                 )}
                 <View style={styles.itemHeaderInfo}>
@@ -151,12 +151,12 @@ export default function GearScreen() {
               </View>
               {item.effect !== "None" && (
                 <View style={[styles.effectRow, { backgroundColor: colors.gold + "18" }]}>
-                  <Feather name="shield" size={12} color={colors.gold} />
+                  <Icon name="shield" size={12} color={colors.gold} />
                   <Text style={[styles.effectText, { color: colors.gold }]}>{item.effect}</Text>
                 </View>
               )}
               <View style={styles.locationRow}>
-                <Feather name="map-pin" size={12} color={colors.mutedForeground} />
+                <Icon name="map-pin" size={12} color={colors.mutedForeground} />
                 <Text style={[styles.locationText, { color: colors.mutedForeground }]}>{item.location}</Text>
               </View>
             </View>
@@ -184,7 +184,7 @@ export default function GearScreen() {
                       />
                     ) : (
                       <View style={[styles.armorImagePlaceholder, { backgroundColor: colors.muted }]}>
-                        <Feather name="layers" size={22} color={colors.mutedForeground} />
+                        <Icon name="layers" size={22} color={colors.mutedForeground} />
                       </View>
                     )}
                     <View style={styles.armorTitleCol}>
@@ -202,7 +202,7 @@ export default function GearScreen() {
                         )}
                       </View>
                     </View>
-                    <Feather name={isOpen ? "chevron-up" : "chevron-down"} size={18} color={colors.mutedForeground} />
+                    <Icon name={isOpen ? "chevron-up" : "chevron-down"} size={18} color={colors.mutedForeground} />
                   </View>
                 </TouchableOpacity>
 
@@ -210,7 +210,7 @@ export default function GearScreen() {
                   <View style={[styles.armorDetails, { borderTopColor: colors.border }]}>
                     {item.setBonus !== "None" && (
                       <View style={[styles.bonusRow, { backgroundColor: colors.sheikah + "15" }]}>
-                        <Feather name="layers" size={12} color={colors.sheikah} />
+                        <Icon name="layers" size={12} color={colors.sheikah} />
                         <Text style={[styles.bonusText, { color: colors.sheikah }]}>Set Bonus: {item.setBonus}</Text>
                       </View>
                     )}
@@ -223,7 +223,7 @@ export default function GearScreen() {
                           <Text style={[styles.pieceDef, { color: colors.sheikah }]}>DEF {p.defense}→{p.maxDefense}</Text>
                         </View>
                         <View style={styles.locationRow}>
-                          <Feather name="map-pin" size={11} color={colors.mutedForeground} />
+                          <Icon name="map-pin" size={11} color={colors.mutedForeground} />
                           <Text style={[styles.locationText, { color: colors.mutedForeground }]}>{p.location}</Text>
                         </View>
                       </View>

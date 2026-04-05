@@ -1,11 +1,11 @@
-import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { WALKTHROUGH_STEPS } from "@/lib/data";
+import { Icon } from "@/components/Icon";
 
-const ICON_MAP: Record<string, keyof typeof Feather.glyphMap> = {
+const ICON_MAP: Record<string, string> = {
   cloud: "cloud",
   map: "map",
   wind: "wind",
@@ -50,7 +50,7 @@ export default function WalkthroughScreen() {
                     {chapter.description}
                   </Text>
                 </View>
-                <Feather
+                <Icon
                   name={isOpen ? "chevron-up" : "chevron-down"}
                   size={20}
                   color={colors.mutedForeground}
@@ -81,7 +81,7 @@ export default function WalkthroughScreen() {
           "Upgrade armor at Great Fairy Fountains — find all four to unlock tier 4.",
         ].map((tip, i) => (
           <View key={i} style={styles.tip}>
-            <Feather name="star" size={12} color={colors.gold} />
+            <Icon name="star" size={12} color={colors.gold} />
             <Text style={[styles.tipText, { color: colors.mutedForeground }]}>{tip}</Text>
           </View>
         ))}

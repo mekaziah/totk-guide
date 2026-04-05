@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
@@ -7,13 +6,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { useTracker } from "@/context/TrackerContext";
 import { ProgressRing } from "@/components/ProgressRing";
+import { Icon } from "@/components/Icon";
 import { router } from "expo-router";
 
 const QUICK_LINKS = [
-  { label: "Walkthrough", icon: "map" as const, route: "/(tabs)/walkthrough", color: "#4fc3a1" },
-  { label: "Shrines", icon: "triangle" as const, route: "/(tabs)/shrines", color: "#a78bfa" },
-  { label: "Gear", icon: "shield" as const, route: "/(tabs)/gear", color: "#d4a843" },
-  { label: "Tracker", icon: "check-circle" as const, route: "/(tabs)/tracker", color: "#4fc3a1" },
+  { label: "Walkthrough", icon: "map", route: "/(tabs)/walkthrough", color: "#4fc3a1" },
+  { label: "Shrines", icon: "triangle", route: "/(tabs)/shrines", color: "#a78bfa" },
+  { label: "Gear", icon: "shield", route: "/(tabs)/gear", color: "#d4a843" },
+  { label: "Tracker", icon: "check-circle", route: "/(tabs)/tracker", color: "#4fc3a1" },
 ];
 
 const TIPS = [
@@ -99,7 +99,7 @@ export default function HomeScreen() {
               activeOpacity={0.75}
             >
               <View style={[styles.quickIconBg, { backgroundColor: link.color + "22" }]}>
-                <Feather name={link.icon} size={22} color={link.color} />
+                <Icon name={link.icon} size={22} color={link.color} />
               </View>
               <Text style={[styles.quickLabel, { color: colors.foreground }]}>{link.label}</Text>
             </TouchableOpacity>
@@ -108,7 +108,7 @@ export default function HomeScreen() {
 
         <View style={[styles.tipCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.tipHeader}>
-            <Feather name="zap" size={14} color={colors.gold} />
+            <Icon name="zap" size={14} color={colors.gold} />
             <Text style={[styles.tipTitle, { color: colors.gold }]}>Daily Tip</Text>
           </View>
           <Text style={[styles.tipText, { color: colors.foreground }]}>{tip}</Text>
