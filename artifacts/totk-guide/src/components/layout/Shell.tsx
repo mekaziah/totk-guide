@@ -1,23 +1,24 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { 
-  Map, Sword, Shield, Target, ScrollText, 
-  MapPin, Sparkles, Navigation, Menu, Eye, BookOpen
+import {
+  Map, Sword, Shield, Target, ScrollText,
+  MapPin, Sparkles, Navigation, Menu, Eye, BookOpen, Trophy
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Overview", icon: BookOpen },
-  { href: "/walkthrough", label: "Walkthrough", icon: ScrollText },
-  { href: "/shrines", label: "Shrines", icon: MapPin },
-  { href: "/weapons", label: "Weapons", icon: Sword },
-  { href: "/shields", label: "Shields", icon: Shield },
-  { href: "/bows", label: "Bows", icon: Target },
-  { href: "/gear", label: "Gear & Armor", icon: Navigation },
-  { href: "/secrets", label: "Secrets", icon: Sparkles },
-  { href: "/hidden", label: "Hidden Areas", icon: Eye },
-  { href: "/map", label: "Interactive Map", icon: Map },
+  { href: "/",          label: "Overview",        icon: BookOpen  },
+  { href: "/walkthrough", label: "Walkthrough",   icon: ScrollText },
+  { href: "/shrines",   label: "Shrines",          icon: MapPin    },
+  { href: "/weapons",   label: "Weapons",          icon: Sword     },
+  { href: "/shields",   label: "Shields",          icon: Shield    },
+  { href: "/bows",      label: "Bows",             icon: Target    },
+  { href: "/gear",      label: "Gear & Armor",     icon: Navigation },
+  { href: "/secrets",   label: "Secrets",          icon: Sparkles  },
+  { href: "/hidden",    label: "Hidden Areas",     icon: Eye       },
+  { href: "/map",       label: "Interactive Map",  icon: Map       },
+  { href: "/tracker",   label: "Tracker",          icon: Trophy    },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -31,8 +32,8 @@ export function Layout({ children }: { children: ReactNode }) {
           <Link key={item.href} href={item.href}>
             <div
               className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors cursor-pointer ${
-                active 
-                  ? "bg-primary/20 text-primary font-medium" 
+                active
+                  ? "bg-primary/20 text-primary font-medium"
                   : "text-muted-foreground hover:bg-accent/10 hover:text-foreground"
               }`}
             >

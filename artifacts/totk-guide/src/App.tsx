@@ -14,6 +14,7 @@ import Gear from "@/pages/gear";
 import Secrets from "@/pages/secrets";
 import HiddenAreas from "@/pages/hidden";
 import InteractiveMap from "@/pages/map";
+import Tracker from "@/pages/tracker";
 import { Layout } from "@/components/layout/Shell";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/secrets" component={Secrets} />
       <Route path="/hidden" component={HiddenAreas} />
       <Route path="/map" component={InteractiveMap} />
+      <Route path="/tracker" component={Tracker} />
       <Route component={NotFound} />
     </Switch>
   );
