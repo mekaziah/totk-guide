@@ -1,26 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
-  Dimensions,
   LayoutChangeEvent,
   Platform,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
-import Svg, {
-  Circle,
-  G,
-  Line,
-  Rect,
-  Text as SvgText,
-} from "react-native-svg";
+import Svg, { Line, Rect, Text as SvgText } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { SHRINES } from "@/lib/data";
@@ -28,39 +17,58 @@ import { TypeBadge } from "@/components/TypeBadge";
 import { useTracker } from "@/context/TrackerContext";
 import { Icon } from "@/components/Icon";
 
-const MAP_W = 2200;
-const MAP_H = 1600;
-const DOT_R = 10;
-const HIT_R = 30;
+// ─── Map coordinate system ───────────────────────────────────────────────────
+// Game world spans roughly x: -5600 → 4800, y: -4600 → 3600
+// We map that to a 2200×400 rendered canvas (wide, scrollable horizontally)
+// The background SVG uses viewBox to fill the canvas; Pressable shrine dots
+// are absolutely-positioned using the same transform — no SVG touch events.
 
-function parseCoords(coords: string): { x: number; y: number } | null {
-  const parts = coords.split(",").map((s) => parseFloat(s.trim()));
-  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return null;
-  return { x: parts[0], y: parts[1] };
+const MAP_W = 2200; // logical canvas width  (matches SVG width)
+const MAP_H = 1600; // logical canvas height (SVG viewBox height)
+const DOT = 14;     // shrine dot diameter in pixels
+const HIT = 28;     // pressable hit-area diameter in pixels
+
+function parseCoords(c: string): { x: number; y: number } | null {
+  const p = c.split(",").map((s) => parseFloat(s.trim()));
+  if (p.length < 2 || isNaN(p[0]) || isNaN(p[1])) return null;
+  return { x: p[0], y: p[1] };
 }
 
-function toMapXY(gameX: number, gameY: number) {
-  const x = ((gameX + 5600) / 10400) * MAP_W;
-  const y = ((3600 - gameY) / 8200) * MAP_H;
-  return { x, y };
+// Convert game coords → logical canvas pixels (MAP_W × MAP_H space)
+function gameToCanvas(gx: number, gy: number) {
+  return {
+    x: ((gx + 5600) / 10400) * MAP_W,
+    y: ((3600 - gy) / 8200)  * MAP_H,
+  };
 }
 
-const REGION_ZONES = [
-  { name: "Hebra", color: "#1a3a5c", gx: -5200, gy: 3600, gw: 3600, gh: 3600 },
-  { name: "Eldin", color: "#3a1a0a", gx: 800, gy: 3400, gw: 3200, gh: 2800 },
-  { name: "Akkala", color: "#2a1a0a", gx: 2600, gy: 3800, gw: 2600, gh: 2200 },
-  { name: "Lanayru", color: "#0a2a3a", gx: 2000, gy: -200, gw: 2600, gh: 2600 },
-  { name: "Central Hyrule", color: "#0a2a14", gx: -1800, gy: -1400, gw: 4200, gh: 3200 },
-  { name: "Gerudo", color: "#2a1e08", gx: -5400, gy: -800, gw: 2800, gh: 3200 },
-  { name: "Necluda", color: "#0a2a10", gx: 400, gy: -1600, gw: 4000, gh: 2400 },
-  { name: "Faron", color: "#0a2208", gx: -800, gy: -3800, gw: 3200, gh: 2400 },
+const REGIONS = [
+  { name: "Hebra",         color: "#1a3a5c", gx: -5200, gy:  3600, gw: 3600, gh: 3600 },
+  { name: "Eldin",         color: "#3a1a0a", gx:   800, gy:  3400, gw: 3200, gh: 2800 },
+  { name: "Akkala",        color: "#2a1a0a", gx:  2600, gy:  3800, gw: 2600, gh: 2200 },
+  { name: "Lanayru",       color: "#0a2a3a", gx:  2000, gy:  -200, gw: 2600, gh: 2600 },
+  { name: "Central Hyrule",color: "#0a2a14", gx: -1800, gy: -1400, gw: 4200, gh: 3200 },
+  { name: "Gerudo",        color: "#2a1e08", gx: -5400, gy:  -800, gw: 2800, gh: 3200 },
+  { name: "Necluda",       color: "#0a2a10", gx:   400, gy: -1600, gw: 4000, gh: 2400 },
+  { name: "Faron",         color: "#0a2208", gx:  -800, gy: -3800, gw: 3200, gh: 2400 },
   { name: "Gerudo Desert", color: "#2a1a04", gx: -5400, gy: -4000, gw: 3600, gh: 3200 },
-  { name: "Hebra Mts", color: "#122030", gx: -3000, gy: 1200, gw: 2000, gh: 2400 },
+  { name: "Hebra Mts",     color: "#122030", gx: -3000, gy:  1200, gw: 2000, gh: 2400 },
 ];
 
-const TYPE_COLORS: Record<string, string> = {
-  Puzzle: "#4fc3a1",
-  Combat: "#e05252",
+const LABELS = [
+  { label: "AKKALA",         gx: 3800, gy:  2800 },
+  { label: "ELDIN",          gx: 1600, gy:  2600 },
+  { label: "LANAYRU",        gx: 3000, gy:   800 },
+  { label: "CENTRAL HYRULE", gx: -200, gy:   400 },
+  { label: "GERUDO",         gx:-4200, gy:  -400 },
+  { label: "HEBRA",          gx:-3800, gy:  2400 },
+  { label: "NECLUDA",        gx: 1800, gy: -1000 },
+  { label: "FARON",          gx:  600, gy: -2800 },
+];
+
+const TYPE_COLOR: Record<string, string> = {
+  Puzzle:   "#4fc3a1",
+  Combat:   "#e05252",
   Blessing: "#d4a843",
 };
 
@@ -71,287 +79,190 @@ interface ShrineInfo {
   type: string;
   hint: string;
   coords: string;
-  mx: number;
-  my: number;
+  cx: number; // canvas x (logical)
+  cy: number; // canvas y (logical)
 }
 
 export default function MapScreen() {
-  const colors = useColors();
-  const insets = useSafeAreaInsets();
+  const colors  = useColors();
+  const insets  = useSafeAreaInsets();
   const { isCompleted } = useTracker();
+
   const [selected, setSelected] = useState<ShrineInfo | null>(null);
-  const [filter, setFilter] = useState<"All" | "Puzzle" | "Combat" | "Blessing">("All");
-  const [containerH, setContainerH] = useState(400);
-  const [containerW, setContainerW] = useState(Dimensions.get("window").width);
+  const [filter,   setFilter]   = useState<"All"|"Puzzle"|"Combat"|"Blessing">("All");
+  const [canvasH,  setCanvasH]  = useState(380); // rendered height of the map container
 
-  const shrines: ShrineInfo[] = SHRINES.map((s) => {
+  const topPad    = Platform.OS === "web" ? 67 : insets.top;
+  const bottomPad = Platform.OS === "web" ? 34 : 0;
+
+  // Scale factor: canvas height / logical height
+  // We keep full MAP_W width (scroll horizontally), scale Y to fit the container
+  const scaleY = canvasH / MAP_H;
+
+  // Pre-compute shrine screen positions
+  const shrines: ShrineInfo[] = SHRINES.flatMap((s) => {
     const gc = parseCoords(s.coords);
-    const { x: mx, y: my } = gc ? toMapXY(gc.x, gc.y) : { x: 0, y: 0 };
-    return { ...s, mx, my };
-  }).filter((s) => s.mx > 0 && s.my > 0);
-
-  const visible = shrines.filter((s) => filter === "All" || s.type === filter);
-  const visibleRef = useRef(visible);
-  useEffect(() => { visibleRef.current = visible; }, [visible]);
-
-  const selectedRef = useRef(selected);
-  useEffect(() => { selectedRef.current = selected; }, [selected]);
-
-  const worldCenter = toMapXY(0, 0);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const savedX = useSharedValue(0);
-  const savedY = useSharedValue(0);
-  const containerWRef = useRef(containerW);
-  const containerHRef = useRef(containerH);
-
-  const initDone = useRef(false);
-
-  const onContainerLayout = useCallback((e: LayoutChangeEvent) => {
-    const { width, height } = e.nativeEvent.layout;
-    setContainerW(width);
-    setContainerH(height);
-    containerWRef.current = width;
-    containerHRef.current = height;
-    if (!initDone.current) {
-      initDone.current = true;
-      const ix = Math.min(0, Math.max(-(MAP_W - width), width / 2 - worldCenter.x));
-      const iy = Math.min(0, Math.max(-(MAP_H - height), height / 2 - worldCenter.y));
-      translateX.value = ix;
-      translateY.value = iy;
-      savedX.value = ix;
-      savedY.value = iy;
-    }
-  }, []);
-
-  const handleTap = useCallback(
-    (ex: number, ey: number, tx: number, ty: number) => {
-      const mapX = ex - tx;
-      const mapY = ey - ty;
-      const found = visibleRef.current.find((s) => {
-        const dx = s.mx - mapX;
-        const dy = s.my - mapY;
-        return dx * dx + dy * dy < HIT_R * HIT_R;
-      });
-      setSelected(found !== undefined ? found : null);
-    },
-    []
-  );
-
-  const pan = Gesture.Pan()
-    .onStart(() => {
-      savedX.value = translateX.value;
-      savedY.value = translateY.value;
-    })
-    .onUpdate((e) => {
-      const cw = containerWRef.current;
-      const ch = containerHRef.current;
-      const nx = savedX.value + e.translationX;
-      const ny = savedY.value + e.translationY;
-      translateX.value = Math.min(0, Math.max(-(MAP_W - cw), nx));
-      translateY.value = Math.min(0, Math.max(-(MAP_H - ch), ny));
-    });
-
-  const tap = Gesture.Tap().onEnd((e) => {
-    runOnJS(handleTap)(e.x, e.y, translateX.value, translateY.value);
+    if (!gc) return [];
+    const { x: cx, y: cy } = gameToCanvas(gc.x, gc.y);
+    if (cx <= 0 || cy <= 0 || cx >= MAP_W || cy >= MAP_H) return [];
+    return [{ ...s, cx, cy }];
   });
 
-  const gesture = Gesture.Race(tap, pan);
-
-  const animStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-    ],
-  }));
-
-  const topPadding = Platform.OS === "web" ? 67 : insets.top;
-  const bottomPadding = Platform.OS === "web" ? 34 : 0;
+  const visible = shrines.filter((s) => filter === "All" || s.type === filter);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View
-        style={[
-          styles.header,
-          {
-            paddingTop: topPadding + 12,
-            backgroundColor: colors.background,
-            borderBottomColor: colors.border,
-          },
-        ]}
-      >
-        <Text style={[styles.screenTitle, { color: colors.sheikah }]}>Hyrule Map</Text>
+
+      {/* ── Header ─────────────────────────────────────────────────── */}
+      <View style={[styles.header, {
+        paddingTop: topPad + 12,
+        backgroundColor: colors.background,
+        borderBottomColor: colors.border,
+      }]}>
+        <Text style={[styles.title, { color: colors.sheikah }]}>Hyrule Map</Text>
         <View style={styles.filterRow}>
-          {(["All", "Puzzle", "Combat", "Blessing"] as const).map((f) => (
+          {(["All","Puzzle","Combat","Blessing"] as const).map((f) => (
             <TouchableOpacity
               key={f}
-              onPress={() => setFilter(f)}
-              style={[
-                styles.filterChip,
-                {
-                  backgroundColor:
-                    filter === f
-                      ? f === "All"
-                        ? colors.sheikah
-                        : TYPE_COLORS[f] ?? colors.sheikah
-                      : colors.muted,
-                  borderColor:
-                    filter === f
-                      ? f === "All"
-                        ? colors.sheikah
-                        : TYPE_COLORS[f] ?? colors.sheikah
-                      : colors.border,
-                },
-              ]}
+              onPress={() => { setFilter(f); setSelected(null); }}
+              style={[styles.chip, {
+                backgroundColor: filter === f
+                  ? (f === "All" ? colors.sheikah : TYPE_COLOR[f] ?? colors.sheikah)
+                  : colors.muted,
+                borderColor: filter === f
+                  ? (f === "All" ? colors.sheikah : TYPE_COLOR[f] ?? colors.sheikah)
+                  : colors.border,
+              }]}
             >
-              <Text
-                style={[
-                  styles.filterLabel,
-                  {
-                    color:
-                      filter === f ? colors.primaryForeground : colors.mutedForeground,
-                  },
-                ]}
-              >
-                {f}
-              </Text>
+              <Text style={[styles.chipLabel, {
+                color: filter === f ? colors.primaryForeground : colors.mutedForeground,
+              }]}>{f}</Text>
             </TouchableOpacity>
           ))}
         </View>
       </View>
 
-      <GestureDetector gesture={gesture}>
-        <View
-          style={styles.mapContainer}
-          onLayout={onContainerLayout}
-          collapsable={false}
+      {/* ── Map ────────────────────────────────────────────────────── */}
+      {/* Single horizontal ScrollView — no nesting, no gesture handler */}
+      <ScrollView
+        horizontal
+        style={styles.mapScroll}
+        contentContainerStyle={{ width: MAP_W }}
+        showsHorizontalScrollIndicator={false}
+        onLayout={(e: LayoutChangeEvent) => setCanvasH(e.nativeEvent.layout.height)}
+      >
+        {/* Background: pure SVG, zero touch events */}
+        <Svg
+          width={MAP_W}
+          height={canvasH}
+          viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+          style={StyleSheet.absoluteFillObject}
+          pointerEvents="none"
         >
-          <Animated.View style={[{ width: MAP_W, height: MAP_H }, animStyle]}>
-            <Svg width={MAP_W} height={MAP_H}>
-              <Rect x={0} y={0} width={MAP_W} height={MAP_H} fill="#081220" />
+          <Rect x={0} y={0} width={MAP_W} height={MAP_H} fill="#081220" />
 
-              {REGION_ZONES.map((rz, i) => {
-                const tl = toMapXY(rz.gx, rz.gy + rz.gh);
-                const br = toMapXY(rz.gx + rz.gw, rz.gy);
-                return (
-                  <Rect
-                    key={i}
-                    x={tl.x}
-                    y={tl.y}
-                    width={br.x - tl.x}
-                    height={br.y - tl.y}
-                    fill={rz.color}
-                    opacity={0.85}
-                  />
-                );
-              })}
+          {REGIONS.map((r, i) => {
+            const tl = gameToCanvas(r.gx,        r.gy + r.gh);
+            const br = gameToCanvas(r.gx + r.gw, r.gy);
+            return (
+              <Rect key={i}
+                x={tl.x} y={tl.y}
+                width={br.x - tl.x} height={br.y - tl.y}
+                fill={r.color} opacity={0.85}
+              />
+            );
+          })}
 
-              {[...Array(11)].map((_, i) => {
-                const x = (i / 10) * MAP_W;
-                return (
-                  <Line
-                    key={`vl-${i}`}
-                    x1={x} y1={0} x2={x} y2={MAP_H}
-                    stroke="#1e3a5f" strokeWidth={0.5} opacity={0.4}
-                  />
-                );
-              })}
-              {[...Array(9)].map((_, i) => {
-                const y = (i / 8) * MAP_H;
-                return (
-                  <Line
-                    key={`hl-${i}`}
-                    x1={0} y1={y} x2={MAP_W} y2={y}
-                    stroke="#1e3a5f" strokeWidth={0.5} opacity={0.4}
-                  />
-                );
-              })}
+          {[...Array(11)].map((_, i) => (
+            <Line key={`v${i}`}
+              x1={(i/10)*MAP_W} y1={0} x2={(i/10)*MAP_W} y2={MAP_H}
+              stroke="#1e3a5f" strokeWidth={0.5} opacity={0.4}
+            />
+          ))}
+          {[...Array(9)].map((_, i) => (
+            <Line key={`h${i}`}
+              x1={0} y1={(i/8)*MAP_H} x2={MAP_W} y2={(i/8)*MAP_H}
+              stroke="#1e3a5f" strokeWidth={0.5} opacity={0.4}
+            />
+          ))}
 
-              {(() => {
-                const c = toMapXY(0, 0);
-                return (
-                  <>
-                    <Line x1={c.x - 14} y1={c.y} x2={c.x + 14} y2={c.y} stroke="#4fc3a1" strokeWidth={1.5} />
-                    <Line x1={c.x} y1={c.y - 14} x2={c.x} y2={c.y + 14} stroke="#4fc3a1" strokeWidth={1.5} />
-                    <SvgText x={c.x + 8} y={c.y - 8} fill="#4fc3a1" fontSize={11} opacity={0.7}>0,0</SvgText>
-                  </>
-                );
-              })()}
+          {LABELS.map((l) => {
+            const { x, y } = gameToCanvas(l.gx, l.gy);
+            return (
+              <SvgText key={l.label} x={x} y={y}
+                fill="#4fc3a1" fontSize={14} fontWeight="bold"
+                opacity={0.3} textAnchor="middle"
+              >{l.label}</SvgText>
+            );
+          })}
+        </Svg>
 
-              {[
-                { label: "AKKALA", gx: 3800, gy: 2800 },
-                { label: "ELDIN", gx: 1600, gy: 2600 },
-                { label: "LANAYRU", gx: 3000, gy: 800 },
-                { label: "CENTRAL HYRULE", gx: -200, gy: 400 },
-                { label: "GERUDO", gx: -4200, gy: -400 },
-                { label: "HEBRA", gx: -3800, gy: 2400 },
-                { label: "NECLUDA", gx: 1800, gy: -1000 },
-                { label: "FARON", gx: 600, gy: -2800 },
-              ].map((rl) => {
-                const { x, y } = toMapXY(rl.gx, rl.gy);
-                return (
-                  <SvgText
-                    key={rl.label}
-                    x={x} y={y}
-                    fill="#4fc3a1"
-                    fontSize={14}
-                    fontWeight="bold"
-                    opacity={0.3}
-                    textAnchor="middle"
-                  >
-                    {rl.label}
-                  </SvgText>
-                );
-              })}
+        {/* Shrine dots — React Native Pressable, absolutely positioned */}
+        {/* scaleY converts logical canvas Y → rendered pixels */}
+        {visible.map((s) => {
+          const done  = isCompleted("shrines", s.id);
+          const color = TYPE_COLOR[s.type] ?? "#4fc3a1";
+          const isSel = selected?.id === s.id;
+          // rendered pixel position (x scale = 1:1, y scaled to canvasH)
+          const px = s.cx;
+          const py = s.cy * scaleY;
+          return (
+            <Pressable
+              key={s.id}
+              onPress={() => setSelected(isSel ? null : s)}
+              style={{
+                position: "absolute",
+                left: px - HIT / 2,
+                top:  py - HIT / 2,
+                width:  HIT,
+                height: HIT,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              hitSlop={4}
+            >
+              {/* glow ring when selected */}
+              {isSel && (
+                <View style={[styles.glow, {
+                  width: DOT + 12, height: DOT + 12,
+                  borderRadius: (DOT + 12) / 2,
+                  backgroundColor: color + "40",
+                  position: "absolute",
+                }]} />
+              )}
+              {/* dot */}
+              <View style={{
+                width:  isSel ? DOT + 4 : DOT,
+                height: isSel ? DOT + 4 : DOT,
+                borderRadius: (isSel ? DOT + 4 : DOT) / 2,
+                backgroundColor: done ? "transparent" : color,
+                borderWidth: done ? 2.5 : isSel ? 2 : 0,
+                borderColor:  color,
+                opacity: done ? 0.55 : 1,
+              }} />
+            </Pressable>
+          );
+        })}
+      </ScrollView>
 
-              {visible.map((s) => {
-                const done = isCompleted("shrines", s.id);
-                const color = TYPE_COLORS[s.type] ?? "#4fc3a1";
-                const isSel = selected?.id === s.id;
-                return (
-                  <G key={s.id}>
-                    {isSel && (
-                      <Circle cx={s.mx} cy={s.my} r={22} fill={color} opacity={0.25} />
-                    )}
-                    <Circle
-                      cx={s.mx}
-                      cy={s.my}
-                      r={isSel ? DOT_R + 3 : DOT_R}
-                      fill={done ? "#081220" : color}
-                      stroke={color}
-                      strokeWidth={done ? 2.5 : 0}
-                      opacity={done ? 0.6 : 1}
-                    />
-                    {isSel && (
-                      <SvgText
-                        x={s.mx}
-                        y={s.my - 18}
-                        fill={color}
-                        fontSize={11}
-                        textAnchor="middle"
-                        fontWeight="bold"
-                      >
-                        {s.name.replace(" Shrine", "")}
-                      </SvgText>
-                    )}
-                  </G>
-                );
-              })}
-            </Svg>
-          </Animated.View>
-        </View>
-      </GestureDetector>
-
-      <View style={[styles.legend, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+      {/* ── Legend ─────────────────────────────────────────────────── */}
+      <View style={[styles.legend, {
+        backgroundColor: colors.surface,
+        borderTopColor: colors.border,
+      }]}>
         <View style={styles.legendRow}>
-          {Object.entries(TYPE_COLORS).map(([type, color]) => (
+          {Object.entries(TYPE_COLOR).map(([type, color]) => (
             <View key={type} style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: color }]} />
               <Text style={[styles.legendLabel, { color: colors.mutedForeground }]}>{type}</Text>
             </View>
           ))}
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: "transparent", borderWidth: 1.5, borderColor: colors.sheikah }]} />
+            <View style={[styles.legendDot, {
+              backgroundColor: "transparent",
+              borderWidth: 1.5,
+              borderColor: colors.sheikah,
+            }]} />
             <Text style={[styles.legendLabel, { color: colors.mutedForeground }]}>Done</Text>
           </View>
           <Text style={[styles.legendCount, { color: colors.mutedForeground }]}>
@@ -360,17 +271,13 @@ export default function MapScreen() {
         </View>
       </View>
 
+      {/* ── Shrine info panel ──────────────────────────────────────── */}
       {selected && (
-        <View
-          style={[
-            styles.infoPanel,
-            {
-              backgroundColor: colors.card,
-              borderTopColor: TYPE_COLORS[selected.type] ?? colors.border,
-              paddingBottom: bottomPadding + 8,
-            },
-          ]}
-        >
+        <View style={[styles.infoPanel, {
+          backgroundColor: colors.card,
+          borderTopColor: TYPE_COLOR[selected.type] ?? colors.border,
+          paddingBottom: bottomPad + 8,
+        }]}>
           <View style={styles.infoPanelHeader}>
             <View style={styles.infoPanelTitle}>
               <Text style={[styles.infoName, { color: colors.foreground }]}>{selected.name}</Text>
@@ -398,62 +305,26 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    gap: 10,
-  },
-  screenTitle: { fontSize: 26, fontWeight: "800" },
-  filterRow: { flexDirection: "row", gap: 8 },
-  filterChip: {
-    borderRadius: 20,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-  },
-  filterLabel: { fontSize: 12, fontWeight: "600" },
-  mapContainer: {
-    flex: 1,
-    overflow: "hidden",
-  },
-  legend: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-  },
-  legendRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  legendItem: { flexDirection: "row", alignItems: "center", gap: 5 },
-  legendDot: { width: 10, height: 10, borderRadius: 5 },
-  legendLabel: { fontSize: 11 },
-  legendCount: { marginLeft: "auto", fontSize: 11 },
-  infoPanel: {
-    borderTopWidth: 2,
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 8,
-    gap: 8,
-  },
-  infoPanelHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-  },
-  infoPanelTitle: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    flexWrap: "wrap",
-  },
-  infoName: { fontSize: 16, fontWeight: "700" },
-  infoHint: { fontSize: 13, fontWeight: "500" },
-  infoMeta: { flexDirection: "row", gap: 20, flexWrap: "wrap" },
-  infoMetaItem: { flexDirection: "row", alignItems: "center", gap: 5 },
-  infoMetaText: { fontSize: 12, fontFamily: "monospace" },
+  container:       { flex: 1 },
+  header:          { paddingHorizontal: 16, paddingBottom: 12, borderBottomWidth: 1, gap: 10 },
+  title:           { fontSize: 26, fontWeight: "800" },
+  filterRow:       { flexDirection: "row", gap: 8 },
+  chip:            { borderRadius: 20, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 6 },
+  chipLabel:       { fontSize: 12, fontWeight: "600" },
+  mapScroll:       { flex: 1 },
+  glow:            {},
+  legend:          { paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: 1 },
+  legendRow:       { flexDirection: "row", alignItems: "center", gap: 14 },
+  legendItem:      { flexDirection: "row", alignItems: "center", gap: 5 },
+  legendDot:       { width: 10, height: 10, borderRadius: 5 },
+  legendLabel:     { fontSize: 11 },
+  legendCount:     { marginLeft: "auto", fontSize: 11 },
+  infoPanel:       { borderTopWidth: 2, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8, gap: 8 },
+  infoPanelHeader: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" },
+  infoPanelTitle:  { flex: 1, flexDirection: "row", alignItems: "center", gap: 10, flexWrap: "wrap" },
+  infoName:        { fontSize: 16, fontWeight: "700" },
+  infoHint:        { fontSize: 13, fontWeight: "500" },
+  infoMeta:        { flexDirection: "row", gap: 20, flexWrap: "wrap" },
+  infoMetaItem:    { flexDirection: "row", alignItems: "center", gap: 5 },
+  infoMetaText:    { fontSize: 12, fontFamily: "monospace" },
 });
