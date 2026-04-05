@@ -114,3 +114,9 @@ id = "BU9OhmXmysnrgxEnNo545"
 uri = "file://artifacts/totk-guide/public/armor/zonaite.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "GJyAS5D26IRx1gFVkSn-5"
+uri = "file://artifacts/totk-mobile/assets/images/icon.png"
+type = "image"
+title = "totk guide app icon"
