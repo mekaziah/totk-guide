@@ -1,7 +1,8 @@
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { useTracker } from "@/context/TrackerContext";
@@ -51,7 +52,7 @@ export default function HomeScreen() {
           <Image
             source={require("../../assets/images/icon.png")}
             style={styles.heroIcon}
-            resizeMode="contain"
+            contentFit="contain"
           />
           <Text style={[styles.heroTitle, { color: colors.sheikah }]}>TotK Guide</Text>
           <Text style={[styles.heroSub, { color: colors.mutedForeground }]}>
