@@ -1,4 +1,3 @@
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import React, { useState } from "react";
 import {
   Platform,
@@ -10,7 +9,6 @@ import {
 } from "react-native";
 import Svg, {
   Circle,
-  Defs,
   G,
   Line,
   Rect,
@@ -87,12 +85,6 @@ export default function MapScreen() {
   const visible = shrines.filter((s) => filter === "All" || s.type === filter);
 
   const HIT = 18;
-  const tapGesture = Gesture.Tap()
-    .runOnJS(true)
-    .onEnd((e) => {
-      const hit = visible.find((s) => Math.hypot(s.mx - e.x, s.my - e.y) < HIT);
-      setSelected(hit ?? null);
-    });
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -161,6 +153,7 @@ export default function MapScreen() {
           style={{ width: MAP_W, height: MAP_H }}
           contentContainerStyle={{ width: MAP_W, height: MAP_H }}
           showsVerticalScrollIndicator={false}
+          nestedScrollEnabled
         >
           <View style={{ width: MAP_W, height: MAP_H, position: "relative" }}>
           <Svg width={MAP_W} height={MAP_H}>
@@ -170,6 +163,7 @@ export default function MapScreen() {
               width={MAP_W}
               height={MAP_H}
               fill="#081220"
+              onPress={() => setSelected(null)}
             />
 
             {REGION_ZONES.map((rz, i) => {
@@ -264,10 +258,16 @@ export default function MapScreen() {
               const color = TYPE_COLORS[s.type] ?? "#4fc3a1";
               const isSelected = selected?.id === s.id;
               return (
-                <G key={s.id}>
+                <G key={s.id} onPress={() => setSelected(isSelected ? null : s)}>
                   {isSelected && (
                     <Circle cx={s.mx} cy={s.my} r={14} fill={color} opacity={0.25} />
                   )}
+                  <Circle
+                    cx={s.mx}
+                    cy={s.my}
+                    r={HIT}
+                    fill="transparent"
+                  />
                   <Circle
                     cx={s.mx}
                     cy={s.my}
@@ -287,11 +287,6 @@ export default function MapScreen() {
             })}
 
           </Svg>
-
-          {/* GestureDetector tap — works correctly inside Android ScrollViews */}
-          <GestureDetector gesture={tapGesture}>
-            <View style={{ position: "absolute", top: 0, left: 0, width: MAP_W, height: MAP_H }} />
-          </GestureDetector>
           </View>
         </ScrollView>
       </ScrollView>
