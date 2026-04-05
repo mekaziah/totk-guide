@@ -3,10 +3,21 @@ import { BOWS, type Bow } from "@/lib/data";
 import { PageHeader } from "@/components/PageHeader";
 import { SortableTable } from "@/components/SortableTable";
 import { VideoLink } from "@/components/VideoLink";
+import { ItemImage } from "@/components/ItemImage";
 
 export default function Bows() {
   const columns = [
-    { key: "name" as const,       label: "Name",           sortable: true  },
+    {
+      key: "name" as const,
+      label: "Name",
+      sortable: true,
+      render: (_: Bow["name"], row: Bow) => (
+        <div className="flex items-center gap-2.5">
+          <ItemImage name={row.name} type="bow" size={36} />
+          <span className="font-medium text-foreground">{row.name}</span>
+        </div>
+      ),
+    },
     { key: "attack" as const,     label: "Atk",            sortable: true  },
     { key: "durability" as const, label: "Dur",            sortable: true  },
     { key: "range" as const,      label: "Range",          sortable: true  },
@@ -16,6 +27,7 @@ export default function Bows() {
     { key: "coords" as const,     label: "Coordinates",    sortable: false },
     {
       key: "name" as const,
+      id: "video",
       label: "Video",
       sortable: false,
       render: (_: Bow["name"], row: Bow) => <VideoLink name={row.name} />,
@@ -26,7 +38,7 @@ export default function Bows() {
     <div className="p-6 lg:p-12 max-w-7xl mx-auto">
       <PageHeader
         title="Bows Database"
-        description={`${BOWS.length} bows catalogued — from the basic Traveler's Bow to the 5-shot Savage Lynel Bow. Includes multishot count, range, exact coordinates, and a video guide link for every bow.`}
+        description={`${BOWS.length} bows catalogued — from the basic Traveler's Bow to the 5-shot Savage Lynel Bow. Every entry shows the item icon, multishot count, range, coordinates, and a video guide link.`}
         icon={<Target className="h-12 w-12" />}
       />
       <SortableTable data={BOWS} columns={columns} />
