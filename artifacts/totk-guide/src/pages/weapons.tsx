@@ -1,7 +1,8 @@
 import { Sword } from "lucide-react";
-import { WEAPONS } from "@/lib/data";
+import { WEAPONS, type Weapon } from "@/lib/data";
 import { PageHeader } from "@/components/PageHeader";
 import { SortableTable } from "@/components/SortableTable";
+import { VideoLink } from "@/components/VideoLink";
 
 export default function Weapons() {
   const columns = [
@@ -12,13 +13,19 @@ export default function Weapons() {
     { key: "effect" as const,     label: "Special Effect", sortable: false },
     { key: "location" as const,   label: "Location",       sortable: false },
     { key: "coords" as const,     label: "Coordinates",    sortable: false },
+    {
+      key: "name" as const,
+      label: "Video",
+      sortable: false,
+      render: (_: Weapon["name"], row: Weapon) => <VideoLink name={row.name} />,
+    },
   ];
 
   return (
     <div className="p-6 lg:p-12 max-w-7xl mx-auto">
       <PageHeader
         title="Weapons Database"
-        description={`${WEAPONS.length} weapons — one-handed swords, two-handed claymores, and spears. Includes base attack, durability, special effects, and exact map coordinates for each find location. Click any column header to sort.`}
+        description={`${WEAPONS.length} weapons catalogued — one-handed swords, two-handed claymores, and spears. Includes base attack, durability, special effects, exact map coordinates, and a direct video guide link for every weapon.`}
         icon={<Sword className="h-12 w-12" />}
       />
       <SortableTable data={WEAPONS} columns={columns} />

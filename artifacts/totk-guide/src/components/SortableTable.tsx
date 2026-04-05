@@ -4,9 +4,11 @@ import { ArrowUpDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Column<T> {
+  id?: string;
   key: keyof T;
   label: string;
   sortable?: boolean;
+  render?: (value: T[keyof T], row: T) => React.ReactNode;
 }
 
 interface SortableTableProps<T> {
@@ -39,8 +41,8 @@ export function SortableTable<T extends Record<string, any>>({ data, columns }: 
         <TableHeader className="bg-muted">
           <TableRow>
             {columns.map((col) => (
-              <TableHead 
-                key={String(col.key)} 
+              <TableHead
+                key={col.id ?? String(col.key) + col.label}
                 className={`font-serif text-primary uppercase tracking-wider ${col.sortable ? "cursor-pointer hover:bg-accent/10" : ""}`}
                 onClick={() => col.sortable && requestSort(col.key)}
               >
@@ -54,13 +56,19 @@ export function SortableTable<T extends Record<string, any>>({ data, columns }: 
         </TableHeader>
         <TableBody>
           {sortedData.map((row, i) => (
-            <TableRow key={row.id || i} className="hover:bg-accent/5 border-border">
+            <motion.tr
+              key={row.id || i}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: i * 0.01 }}
+              className="hover:bg-accent/5 border-b border-border transition-colors"
+            >
               {columns.map((col) => (
-                <TableCell key={String(col.key)} className="text-muted-foreground">
-                  {row[col.key]}
+                <TableCell key={col.id ?? String(col.key) + col.label} className="text-muted-foreground align-middle">
+                  {col.render ? col.render(row[col.key], row) : row[col.key]}
                 </TableCell>
               ))}
-            </TableRow>
+            </motion.tr>
           ))}
         </TableBody>
       </Table>
